@@ -18,11 +18,10 @@
             --text-secondary: #94a3b8;
             --border-glow: rgba(98, 255, 237, 0.35);
             --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-
-            --button-gradient-search: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); /* Orange gradient for search */
-            --button-gradient-fail: linear-gradient(135deg, #ef4444 0%, #f87171 100%); /* Red gradient for failure */
-            --button-gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%); /* Green gradient for success */
-
+            --button-gradient-search: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+            --button-gradient-fail: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+            --button-gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            --button-gradient-disabled: linear-gradient(135deg, #3d4f66 0%, #2f3d52 100%);
             --border-radius: 16px;
         }
 
@@ -40,253 +39,46 @@
         }
 
         /* --- Header/Balance UI (Matching Hub) --- */
-        .balance-bar {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 16px;
-            gap: 12px;
-            position: relative;
-            margin-bottom: 30px; 
-        }
+        .balance-bar { display: flex; align-items: center; justify-content: center; padding: 12px 16px; gap: 12px; position: relative; margin-bottom: 30px; }
+        .balance-card { flex: 1; max-width: 180px; position: relative; cursor: pointer; padding: 12px; border-radius: 16px; background: var(--panel-gradient); border: 1px solid rgba(98, 255, 237, 0.35); transition: transform 0.2s ease; z-index: 10; }
+        .balance-card:hover { transform: translateY(-2px); }
+        .balance-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 4px; }
+        .balance-amount { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
+        .currency-symbol { font-size: 0.8rem; padding: 2px 6px; border-radius: 8px; background: rgba(34, 255, 197, 0.18); color: var(--accent); }
+        .balance-popup { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(8px); background: var(--popup-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-glow); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7); opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease; z-index: 1000; white-space: nowrap; color: var(--text-primary); min-width: 150px; text-align: center; }
+        .balance-popup::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: var(--popup-bg); border-left: 1px solid var(--border-glow); border-top: 1px solid var(--border-glow); z-index: 1001; }
+        .balance-card.active .balance-popup { opacity: 1; visibility: visible; }
+        .balance-popup .balance-amount { display: inline-flex; justify-content: center; align-items: center; width: 100%; }
 
-        .balance-card {
-            flex: 1;
-            max-width: 180px;
-            position: relative;
-            cursor: pointer;
-            padding: 12px;
-            border-radius: 16px;
-            background: var(--panel-gradient);
-            border: 1px solid rgba(98, 255, 237, 0.35);
-            transition: transform 0.2s ease;
-            z-index: 10; 
-        }
-
-        .balance-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .balance-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--text-secondary);
-            margin-bottom: 4px;
-        }
-
-        .balance-amount {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .currency-symbol {
-            font-size: 0.8rem;
-            padding: 2px 6px;
-            border-radius: 8px;
-            background: rgba(34, 255, 197, 0.18);
-            color: var(--accent);
-        }
-
-        .balance-popup {
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(8px);
-            background: var(--popup-bg);
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid var(--border-glow);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-            z-index: 1000;
-            white-space: nowrap;
-            color: var(--text-primary);
-            min-width: 150px;
-            text-align: center; 
-        }
-
-        .balance-popup::before {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 50%;
-            transform: translateX(-50%) rotate(45deg);
-            width: 12px;
-            height: 12px;
-            background: var(--popup-bg);
-            border-left: 1px solid var(--border-glow);
-            border-top: 1px solid var(--border-glow);
-            z-index: 1001;
-        }
-
-        .balance-card.active .balance-popup {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .balance-popup .balance-amount {
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-        }
-
-        .section-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent);
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 25px;
-        }
+        .section-title { font-size: 1.8rem; font-weight: 700; color: var(--accent); text-align: center; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 25px; }
 
         /* --- Search Page Specific Styles --- */
-        .search-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
-        }
+        .search-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+        .search-location-button { position: relative; height: 140px; background: var(--panel-gradient); border-radius: var(--border-radius); display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; color: var(--text-primary); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid rgba(98, 255, 237, 0.1); cursor: pointer; }
+        .search-location-button:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
+        .search-location-button::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; z-index: 1; background: var(--button-gradient-search); }
+        .search-location-button.success::before { background: var(--button-gradient-success); }
+        .search-location-button.fail::before { background: var(--button-gradient-fail); }
+        .search-location-button:disabled { opacity: 0.8; cursor: default; }
+        .location-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .location-name { font-weight: 600; text-align: center; padding: 0 10px; font-size: 1rem; }
 
-        .search-location-button {
-            position: relative;
-            height: 140px;
-            background: var(--panel-gradient);
-            border-radius: var(--border-radius);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-primary);
-            overflow: hidden;
-            box-shadow: var(--shadow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            border: 1px solid rgba(98, 255, 237, 0.1);
-            cursor: pointer;
-        }
+        #resultContainer { margin-top: 30px; padding: 20px; background: var(--panel-gradient); border-radius: var(--border-radius); border: 1px solid var(--border-glow); text-align: center; display: none; }
+        #resultTitle { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+        #resultMessage { font-size: 1.1rem; color: var(--text-secondary); }
+        #resultReward { font-size: 2rem; font-weight: 700; color: var(--accent); margin-top: 15px; }
 
-        .search-location-button:hover:not(:disabled) {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        }
+        #searchAgainButton { margin-top: 20px; padding: 10px 20px; background: var(--button-gradient-search); border: none; border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer; transition: background 0.3s ease; }
+        #searchAgainButton:disabled { background: var(--button-gradient-disabled); cursor: not-allowed; opacity: 0.7; }
 
-        .search-location-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 6px;
-            z-index: 1;
-            background: var(--button-gradient-search); /* Initial color */
-        }
+        /* --- NEW STYLES FOR COOLDOWN CARD --- */
+        #cooldownArea { padding: 30px; background: var(--panel-gradient); border-radius: var(--border-radius); border: 1px solid var(--border-glow); text-align: center; display: none; }
+        #cooldownIcon { font-size: 3rem; margin-bottom: 15px; color: #ef4444; }
+        #cooldownTitle { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+        #postSearchCooldownTimer, #postRefreshCooldownTimer { margin-top: 15px; font-size: 1.1rem; color: var(--text-secondary); font-weight: 600; display: none; }
 
-        .search-location-button.success::before {
-            background: var(--button-gradient-success);
-        }
-
-        .search-location-button.fail::before {
-            background: var(--button-gradient-fail);
-        }
-
-        .search-location-button:disabled {
-            opacity: 0.8;
-            cursor: default;
-        }
-
-        .location-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .location-name {
-            font-weight: 600;
-            text-align: center;
-            padding: 0 10px;
-            font-size: 1rem;
-        }
-
-        #resultContainer {
-            margin-top: 30px;
-            padding: 20px;
-            background: var(--panel-gradient);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--border-glow);
-            text-align: center;
-            display: none;
-        }
-
-        #resultTitle {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        #resultMessage {
-            font-size: 1.1rem;
-            color: var(--text-secondary);
-        }
-
-        #resultReward {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-top: 15px;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--popup-bg);
-            color: var(--text-primary);
-            padding: 10px 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 9999;
-            pointer-events: none;
-            border: 1px solid var(--border-glow);
-        }
-        .toast.show {
-            opacity: 1;
-        }
-
-        .search-again-button {
-            display: block;
-            width: 100%;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background 0.3s ease, transform 0.1s ease;
-            color: var(--text-primary);
-            background: var(--button-gradient-search);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-            margin-top: 20px;
-        }
-
-        .search-again-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
-        }
-
-        .search-again-button:active {
-            transform: translateY(0);
-        }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--popup-bg); color: var(--text-primary); padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); opacity: 0; transition: opacity 0.3s ease; z-index: 9999; pointer-events: none; border: 1px solid var(--border-glow); }
+        .toast.show { opacity: 1; }
     </style>
 </head>
 <body>
@@ -294,303 +86,156 @@
         <!-- HEADER/BALANCE BAR -->
         <header>
             <div class="balance-bar">
-                <div class="balance-card" id="at-card">
-                    <div class="balance-label">Arcade<br>Tokens</div>
-                    <div class="balance-amount">
-                        <span class="abbreviated">0.00</span>
-                        <span class="currency-symbol">AT</span>
-                    </div>
-                    <div class="balance-popup">
-                        <div class="balance-label">Full Balance</div>
-                        <div class="balance-amount">
-                            <span class="full">0</span>
-                            <span class="currency-symbol">AT</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="balance-card" id="gj-card">
-                    <div class="balance-label">Golden Joysticks</div>
-                    <div class="balance-amount">
-                        <span class="abbreviated">0.00</span>
-                        <span class="currency-symbol">GJ</span>
-                    </div>
-                    <div class="balance-popup">
-                        <div class="balance-label">Full Balance</div>
-                        <div class="balance-amount">
-                            <span class="full">0</span>
-                            <span class="currency-symbol">GJ</span>
-                        </div>
-                    </div>
-                </div>
+                <div class="balance-card" id="at-card"><div class="balance-label">Arcade<br>Tokens</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol">AT</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol">AT</span></div></div></div>
+                <div class="balance-card" id="gj-card"><div class="balance-label">Golden Joysticks</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol">GJ</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol">GJ</span></div></div></div>
             </div>
         </header>
 
-        <!-- SEARCH AREA -->
-        <h2 class="section-title">Where to Search?</h2>
-        <div class="search-info" style="color: var(--text-secondary); text-align: center; margin-bottom: 25px;">
-            Choose one location below to search for Arcade Tokens!
+        <!-- SEARCH AREA (Default View) -->
+        <div id="searchArea">
+            <h2 class="section-title">Where to Search?</h2>
+            <div class="search-info" style="color: var(--text-secondary); text-align: center; margin-bottom: 25px;">
+                Choose one location below to search for Arcade Tokens!
+            </div>
+            <div id="searchGrid" class="search-grid"></div>
         </div>
 
-        <div id="searchGrid" class="search-grid">
-            <!-- Locations will be inserted here by JavaScript -->
-        </div>
-
+        <!-- RESULT AREA (Post-Search View) -->
         <div id="resultContainer">
             <div id="resultTitle">Result</div>
             <div id="resultMessage"></div>
             <div id="resultReward"></div>
-            <button onclick="location.reload()" class="search-again-button">Search Again</button>
+            <button id="searchAgainButton" onclick="location.reload()">Search Again</button>
+            <div id="postSearchCooldownTimer"></div>
+        </div>
+
+        <!-- COOLDOWN AREA (Post-Refresh View) -->
+        <div id="cooldownArea">
+            <i class="fa-solid fa-clock cooldown-icon"></i>
+            <div id="cooldownTitle">Search on Cooldown</div>
+            <div id="postRefreshCooldownTimer"></div>
         </div>
 
         <a href="index.html" style="display: block; margin-top: 30px; color: var(--accent); text-align: center; text-decoration: none;">&larr; Back to Hub</a>
     </div>
 
-    <!-- Toast for Notifications -->
     <div id="toast" class="toast"></div>
 
     <script>
         // --- Simulated locations.json Data ---
         const SEARCH_LOCATIONS_DATA = [
-            {
-                name: "Pond",
-                icon: "fa-solid fa-water",
-                successRate: 0.75, // 75%
-                rewardRange: [1000, 3000],
-                successOutcomes: [
-                    "You found a rare coin submerged in the mud!", 
-                    "You caught a very big fish, which you sold for tokens!", 
-                    "You found a handful of discarded Arcade Tokens floating near the shore."
-                ],
-                failureOutcomes: [
-                    "You found an old boot, useless!", 
-                    "You slipped on a mossy rock and got soaked. No tokens found.", 
-                    "You found nothing of value."
-                ]
-            },
-            {
-                name: "Dumpster",
-                icon: "fa-solid fa-dumpster",
-                successRate: 0.50, // 50%
-                rewardRange: [3000, 7000],
-                successOutcomes: [
-                    "You found a slightly damaged, but functional, laptop which you sold for a decent sum.", 
-                    "Jackpot! You found a discarded bag containing a decent stack of cash.", 
-                    "You discovered a strange, valuable artifact hidden under layers of trash."
-                ],
-                failureOutcomes: [
-                    "You ran into a hungry, territorial dog. You escaped with only a scare and no tokens.", 
-                    "You cut your hand on some sharp glass. Ouch!", 
-                    "You found only rotten food and foul smells. No tokens."
-                ]
-            },
-            {
-                name: "Park",
-                icon: "fa-solid fa-tree",
-                successRate: 0.60, // 60%
-                rewardRange: [2000, 5000],
-                successOutcomes: [
-                    "You found a lost wallet containing a surprising number of tokens!", 
-                    "You spotted a covert exchange of tokens and managed to grab a few dropped ones.", 
-                    "You found a small, hidden stash buried under a park bench."
-                ],
-                failureOutcomes: [
-                    "You were chased by an overzealous security guard. Empty pockets!", 
-                    "You searched for an hour but found nothing of value.", 
-                    "You stepped in dog poop. Disgusting and unsuccessful."
-                ]
-            },
-            {
-                name: "Couch",
-                icon: "fa-solid fa-couch",
-                successRate: 0.90, // 90%
-                rewardRange: [500, 1500],
-                successOutcomes: [
-                    "You found a generous amount of forgotten change deep in the cushions.", 
-                    "You found a wrinkled ten-token bill stuffed behind a pillow.", 
-                    "You found many bits of forgotten currency."
-                ],
-                failureOutcomes: [
-                    "You found nothing but dust bunnies.", 
-                    "You found only crumbs and lint."
-                ]
-            },
-            {
-                name: "Car",
-                icon: "fa-solid fa-car",
-                successRate: 0.40, // 40%
-                rewardRange: [5000, 10000],
-                successOutcomes: [
-                    "You located a secret compartment containing tokens and valuables!", 
-                    "You discovered a locked case in the trunk. After some effort, you opened it to find a large reward."
-                ],
-                failureOutcomes: [
-                    "You accidentally set off the car alarm! You had to run before finding anything.", 
-                    "You found only old parking tickets and empty wrappers. Nothing worth taking.", 
-                    "The search was fruitless. Nothing to see here."
-                ]
-            }
+            { name: "Pond", icon: "fa-solid fa-water", successRate: 0.75, rewardRange: [1000, 3000], successOutcomes: ["You found a rare coin submerged in the mud!", "You caught a very big fish, which you sold for tokens!", "You found a handful of discarded Arcade Tokens floating near the shore."], failureOutcomes: ["You found an old boot, useless!", "You slipped on a mossy rock and got soaked. No tokens found.", "You found nothing of value."] },
+            { name: "Dumpster", icon: "fa-solid fa-dumpster", successRate: 0.50, rewardRange: [3000, 7000], successOutcomes: ["You found a slightly damaged, but functional, laptop which you sold for a decent sum.", "Jackpot! You found a discarded bag containing a decent stack of cash.", "You discovered a strange, valuable artifact hidden under layers of trash."], failureOutcomes: ["You ran into a hungry, territorial dog. You escaped with only a scare and no tokens.", "You cut your hand on some sharp glass. Ouch!", "You found only rotten food and foul smells. No tokens."] },
+            { name: "Park", icon: "fa-solid fa-tree", successRate: 0.60, rewardRange: [2000, 5000], successOutcomes: ["You found a lost wallet containing a surprising number of tokens!", "You spotted a covert exchange of tokens and managed to grab a few dropped ones.", "You found a small, hidden stash buried under a park bench."], failureOutcomes: ["You were chased by an overzealous security guard. Empty pockets!", "You searched for an hour but found nothing of value.", "You stepped in dog poop. Disgusting and unsuccessful."] },
+            { name: "Couch", icon: "fa-solid fa-couch", successRate: 0.90, rewardRange: [500, 1500], successOutcomes: ["You found a generous amount of forgotten change deep in the cushions.", "You found a wrinkled ten-token bill stuffed behind a pillow.", "You found many bits of forgotten currency."], failureOutcomes: ["You found nothing but dust bunnies.", "You found only crumbs and lint."] },
+            { name: "Car", icon: "fa-solid fa-car", successRate: 0.40, rewardRange: [5000, 10000], successOutcomes: ["You located a secret compartment containing tokens and valuables!", "You discovered a locked case in the trunk. After some effort, you opened it to find a large reward."], failureOutcomes: ["You accidentally set off the car alarm! You had to run before finding anything.", "You found only old parking tickets and empty wrappers. Nothing worth taking.", "The search was fruitless. Nothing to see here."] }
         ];
 
-        // --- IndexedDB Wrapper Class (REPLICATED from Hub) ---
+        const SEARCH_COOLDOWN_SECONDS = 25;
+        let cooldownInterval;
+
+        // --- IndexedDB Wrapper Class (REPLICATED) ---
         class UserDB {
-            constructor() {
-                this.dbName = 'DankArcadeHubDB';
-                this.storeName = 'userData';
-                this.db = null;
-            }
-
-            async open() {
-                return new Promise((resolve, reject) => {
-                    if (this.db) {
-                        resolve(this.db);
-                        return;
-                    }
-                    const request = indexedDB.open(this.dbName, 1);
-                    request.onupgradeneeded = (event) => {
-                        const db = event.target.result;
-                        if (!db.objectStoreNames.contains(this.storeName)) {
-                            db.createObjectStore(this.storeName);
-                        }
-                    };
-                    request.onsuccess = (event) => {
-                        this.db = event.target.result;
-                        resolve(this.db);
-                    };
-                    request.onerror = (event) => {
-                        console.error("IndexedDB error:", event.target.errorCode);
-                        reject(new Error("Failed to open IndexedDB"));
-                    };
-                });
-            }
-
-            async get(key) {
-                const db = await this.open();
-                return new Promise((resolve, reject) => {
-                    const transaction = db.transaction(this.storeName, 'readonly');
-                    const store = transaction.objectStore(this.storeName);
-                    const request = store.get(key);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = () => reject(request.error);
-                });
-            }
-
-            async set(key, value) {
-                const db = await this.open();
-                return new Promise((resolve, reject) => {
-                    const transaction = db.transaction(this.storeName, 'readwrite');
-                    const store = transaction.objectStore(this.storeName);
-                    const request = store.put(value, key);
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = () => reject(request.error);
-                });
-            }
+            constructor() { this.dbName = 'DankArcadeHubDB'; this.storeName = 'userData'; this.db = null; }
+            async open() { return new Promise((resolve, reject) => { if (this.db) { resolve(this.db); return; } const request = indexedDB.open(this.dbName, 1); request.onupgradeneeded = (event) => { const db = event.target.result; if (!db.objectStoreNames.contains(this.storeName)) { db.createObjectStore(this.storeName); } }; request.onsuccess = (event) => { this.db = event.target.result; resolve(this.db); }; request.onerror = (event) => { console.error("IndexedDB error:", event.target.errorCode); reject(new Error("Failed to open IndexedDB")); }; }); }
+            async get(key) { const db = await this.open(); return new Promise((resolve, reject) => { const transaction = db.transaction(this.storeName, 'readonly'); const store = transaction.objectStore(this.storeName); const request = store.get(key); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); }); }
+            async set(key, value) { const db = await this.open(); return new Promise((resolve, reject) => { const transaction = db.transaction(this.storeName, 'readwrite'); const store = transaction.objectStore(this.storeName); const request = store.put(value, key); request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error); }); }
         }
 
         const userDB = new UserDB();
 
-        // --- Core Application Logic (REPLICATED & MODIFIED) ---
-
-        function formatNumber(num) {
-            if (num < 1000) return num.toLocaleString(undefined, { maximumFractionDigits: 0 });
-            if (num >= 1e12) return (num / 1e12).toFixed(2) + 't';
-            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'b';
-            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'm';
-            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k';
-            return num.toString();
-        }
-
-        function showToast(message, duration = 3000) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, duration);
-        }
+        // --- Core Application Logic (REPLICATED) ---
+        function formatNumber(num) { if (num < 1000) return num.toLocaleString(undefined, { maximumFractionDigits: 0 }); if (num >= 1e12) return (num / 1e12).toFixed(2) + 't'; if (num >= 1e9) return (num / 1e9).toFixed(2) + 'b'; if (num >= 1e6) return (num / 1e6).toFixed(2) + 'm'; if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k'; return num.toString(); }
+        function showToast(message, duration = 3000) { const toast = document.getElementById('toast'); toast.textContent = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, duration); }
 
         async function getUserData() {
-            const defaultData = {
-                arcadeTokens: 0,
-                goldenJoysticks: 0,
-            };
+            const defaultData = { arcadeTokens: 0, goldenJoysticks: 0, searchCooldownEnd: 0 };
             try {
                 let data = await userDB.get('user');
-                if (!data) {
-                    data = defaultData;
-                    await userDB.set('user', data);
-                }
+                if (!data) { data = defaultData; await userDB.set('user', data); }
+                data.searchCooldownEnd = data.searchCooldownEnd || 0;
                 return data;
-            } catch (e) {
-                console.error("Error retrieving user data:", e);
-                return defaultData;
-            }
+            } catch (e) { console.error("Error retrieving user data:", e); return defaultData; }
         }
 
-        async function saveUserData(data) {
-            try {
-                await userDB.set('user', data);
-            } catch (e) {
-                console.error("Error saving user data:", e);
-                showToast("Error saving data!", 5000);
-            }
-        }
+        async function saveUserData(data) { try { await userDB.set('user', data); } catch (e) { console.error("Error saving user data:", e); showToast("Error saving data!", 5000); } }
 
         async function updateBalances() {
             const data = await getUserData();
-
-            // Update Arcade Tokens (AT)
-            const atBalance = data.arcadeTokens;
-            document.querySelector('#at-card .abbreviated').textContent = formatNumber(atBalance);
-            document.querySelector('#at-card .full').textContent = atBalance.toLocaleString();
-
-            // Update Golden Joysticks (GJ)
-            const gjBalance = data.goldenJoysticks;
-            document.querySelector('#gj-card .abbreviated').textContent = formatNumber(gjBalance);
-            document.querySelector('#gj-card .full').textContent = gjBalance.toLocaleString();
-
+            document.querySelector('#at-card .abbreviated').textContent = formatNumber(data.arcadeTokens);
+            document.querySelector('#at-card .full').textContent = data.arcadeTokens.toLocaleString();
+            document.querySelector('#gj-card .abbreviated').textContent = formatNumber(data.goldenJoysticks);
+            document.querySelector('#gj-card .full').textContent = data.goldenJoysticks.toLocaleString();
             return data;
         }
 
         // --- Search Functionality ---
 
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
-
-        function getRandomSelection(array) {
-            return array[Math.floor(Math.random() * array.length)];
-        }
-
-        function selectRandomLocations(data, count) {
-            const shuffled = data.sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, count);
-        }
+        function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function getRandomSelection(array) { return array[Math.floor(Math.random() * array.length)]; }
+        function selectRandomLocations(data, count) { const shuffled = data.sort(() => 0.5 - Math.random()); return shuffled.slice(0, count); }
 
         function createLocationButton(locationData) {
             const button = document.createElement('button');
             button.className = 'search-location-button';
-            button.setAttribute('data-location', locationData.name);
-            button.innerHTML = `
-                <i class="${locationData.icon} location-icon"></i>
-                <div class="location-name">${locationData.name}</div>
-            `;
+            button.innerHTML = `<i class="${locationData.icon} location-icon"></i><div class="location-name">${locationData.name}</div>`;
             button.addEventListener('click', () => handleSearch(button, locationData));
             return button;
         }
 
         function renderSearchOptions() {
             const searchGrid = document.getElementById('searchGrid');
-            searchGrid.innerHTML = ''; // Clear previous
-
+            searchGrid.innerHTML = '';
             const locations = selectRandomLocations(SEARCH_LOCATIONS_DATA, 3);
-            locations.forEach(location => {
-                searchGrid.appendChild(createLocationButton(location));
-            });
+            locations.forEach(location => { searchGrid.appendChild(createLocationButton(location)); });
+            document.getElementById('searchArea').style.display = 'block';
+        }
+
+        function startPostSearchCooldown(endTime) {
+            clearInterval(cooldownInterval);
+            const searchAgainButton = document.getElementById('searchAgainButton');
+            const cooldownTimer = document.getElementById('postSearchCooldownTimer');
+
+            const updateTimer = () => {
+                const remainingMs = endTime - Date.now();
+                if (remainingMs <= 0) {
+                    clearInterval(cooldownInterval);
+                    searchAgainButton.disabled = false;
+                    cooldownTimer.style.display = 'none';
+                    return;
+                }
+                searchAgainButton.disabled = true;
+                cooldownTimer.style.display = 'block';
+                const remainingSeconds = Math.ceil(remainingMs / 1000);
+                cooldownTimer.textContent = `${remainingSeconds} seconds until you can search again.`;
+            };
+            updateTimer();
+            cooldownInterval = setInterval(updateTimer, 1000);
+        }
+
+        function startPostRefreshCooldown(endTime) {
+            clearInterval(cooldownInterval);
+            const cooldownArea = document.getElementById('cooldownArea');
+            const cooldownTimer = document.getElementById('postRefreshCooldownTimer');
+            cooldownArea.style.display = 'block';
+
+            const updateTimer = () => {
+                const remainingMs = endTime - Date.now();
+                if (remainingMs <= 0) {
+                    clearInterval(cooldownInterval);
+                    cooldownArea.style.display = 'none';
+                    renderSearchOptions(); // Automatically show new options
+                    return;
+                }
+                cooldownTimer.style.display = 'block';
+                const remainingSeconds = Math.ceil(remainingMs / 1000);
+                cooldownTimer.textContent = `You can search again in ${remainingSeconds} seconds.`;
+            };
+            updateTimer();
+            cooldownInterval = setInterval(updateTimer, 1000);
         }
 
         async function handleSearch(button, locationData) {
-            // 1. Disable all buttons
             document.querySelectorAll('.search-location-button').forEach(btn => btn.disabled = true);
 
             let reward = 0;
@@ -598,63 +243,63 @@
             let isSuccess = Math.random() < locationData.successRate;
 
             if (isSuccess) {
-                // Success: Calculate reward and choose message
                 reward = getRandomInt(locationData.rewardRange[0], locationData.rewardRange[1]);
                 message = getRandomSelection(locationData.successOutcomes);
-
-                // Update UI: Mark button as success
                 button.classList.add('success');
-
-                // 2. Update IndexedDB
-                const data = await getUserData();
-                data.arcadeTokens += reward;
-                await saveUserData(data);
-                await updateBalances(); // Update top bar balance
-
             } else {
-                // Failure: Choose message (reward is 0)
                 message = getRandomSelection(locationData.failureOutcomes);
-
-                // Update UI: Mark button as failure
                 button.classList.add('fail');
             }
 
-            // 3. Display Result
+            const data = await getUserData();
+            if (isSuccess) { data.arcadeTokens += reward; }
+            const cooldownEndTime = Date.now() + (SEARCH_COOLDOWN_SECONDS * 1000);
+            data.searchCooldownEnd = cooldownEndTime;
+
+            await saveUserData(data);
+            await updateBalances();
+
+            // Display the immediate result
+            document.getElementById('searchArea').style.display = 'none';
             const resultContainer = document.getElementById('resultContainer');
             document.getElementById('resultTitle').textContent = isSuccess ? "SUCCESS!" : "FAILURE";
             document.getElementById('resultMessage').textContent = message;
             document.getElementById('resultReward').textContent = isSuccess ? `${reward.toLocaleString()} AT Earned` : "0 AT Earned";
             resultContainer.style.display = 'block';
+
+            startPostSearchCooldown(cooldownEndTime);
         }
 
         // --- Initialization ---
-
         function setupBalanceCards() {
             const cards = document.querySelectorAll('.balance-card');
-            cards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    cards.forEach(c => { if (c !== card) c.classList.remove('active'); });
-                    this.classList.toggle('active');
-                });
-            });
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.balance-card')) {
-                    cards.forEach(card => card.classList.remove('active'));
-                }
-            });
+            cards.forEach(card => { card.addEventListener('click', function(e) { cards.forEach(c => { if (c !== card) c.classList.remove('active'); }); this.classList.toggle('active'); }); });
+            document.addEventListener('click', function(e) { if (!e.target.closest('.balance-card')) { cards.forEach(card => card.classList.remove('active')); } });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            userDB.open().then(() => {
-                updateBalances();
-                renderSearchOptions();
-            }).catch(e => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            await userDB.open().catch(e => {
                 console.error("DB Initialization Failed:", e);
                 showToast("Failed to load user data from storage!", 8000);
             });
 
+            const data = await updateBalances();
+            const now = Date.now();
+
+            // Hide all main views by default
+            document.getElementById('searchArea').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('cooldownArea').style.display = 'none';
+
+            if (data.searchCooldownEnd > now) {
+                // Cooldown is active after a refresh.
+                startPostRefreshCooldown(data.searchCooldownEnd);
+            } else {
+                // No cooldown, show search options.
+                renderSearchOptions();
+            }
+
             setupBalanceCards();
-            // No periodic update needed here, as balance updates on success.
         });
     </script>
 </body>
