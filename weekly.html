@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dank Arcade Hub - Weekly Claim</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* BASE THEME VARIABLES AND STYLES (MATCHING HUB) */
+        :root {
+            --panel-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --popup-bg: #1e293b;
+            --accent: #22ffc5;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border-glow: rgba(98, 255, 237, 0.35);
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
+            --button-gradient-weekly: linear-gradient(135deg, #44cc88 0%, #10b981 100%); /* Green gradient for weekly */
+            --button-gradient-weekly-disabled: linear-gradient(135deg, #3d4f66 0%, #2f3d52 100%);
+
+            --border-radius: 16px;
+        }
+
+        body {
+            background-color: #0f172a; 
+            color: var(--text-primary);
+            font-family: 'Chakra Petch', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- Header/Balance UI (Matching Hub) --- */
+        .balance-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            gap: 12px;
+            position: relative;
+            margin-bottom: 30px; 
+        }
+
+        .balance-card {
+            flex: 1;
+            max-width: 180px;
+            position: relative;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 16px;
+            background: var(--panel-gradient);
+            border: 1px solid rgba(98, 255, 237, 0.35);
+            transition: transform 0.2s ease;
+            z-index: 10; 
+        }
+
+        .balance-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .balance-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .balance-amount {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .currency-symbol {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: rgba(34, 255, 197, 0.18);
+            color: var(--accent);
+        }
+
+        .balance-popup {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--popup-bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 1000;
+            white-space: nowrap;
+            color: var(--text-primary);
+            min-width: 150px;
+            text-align: center; 
+        }
+
+        .balance-popup::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 12px;
+            height: 12px;
+            background: var(--popup-bg);
+            border-left: 1px solid var(--border-glow);
+            border-top: 1px solid var(--border-glow);
+            z-index: 1001;
+        }
+
+        .balance-card.active .balance-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .balance-popup .balance-amount {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 25px;
+        }
+
+        /* --- Weekly Page Specific Styles --- */
+        .weekly-card {
+            background: var(--panel-gradient);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            border: 1px solid var(--border-glow);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .weekly-icon {
+            font-size: 4rem;
+            color: #34d399; /* Green color for weekly icon */
+            margin-bottom: 15px;
+        }
+
+        .weekly-streak {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .weekly-reward {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 25px;
+        }
+
+        .weekly-button {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            color: var(--text-primary);
+            background: var(--button-gradient-weekly);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .weekly-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .weekly-button:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .weekly-button:disabled {
+            background: var(--button-gradient-weekly-disabled);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .weekly-timer {
+            font-size: 1.2rem;
+            color: #ef4444; /* Red color for timer */
+            margin-top: 20px;
+            font-weight: 600;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--popup-bg);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 9999;
+            pointer-events: none;
+            border: 1px solid var(--border-glow);
+        }
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER/BALANCE BAR -->
+        <header>
+            <div class="balance-bar">
+                <div class="balance-card" id="at-card">
+                    <div class="balance-label">Arcade<br>Tokens</div>
+                    <div class="balance-amount">
+                        <span class="abbreviated">0.00</span>
+                        <span class="currency-symbol">AT</span>
+                    </div>
+                    <div class="balance-popup">
+                        <div class="balance-label">Full Balance</div>
+                        <div class="balance-amount">
+                            <span class="full">0</span>
+                            <span class="currency-symbol">AT</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="balance-card" id="gj-card">
+                    <div class="balance-label">Golden Joysticks</div>
+                    <div class="balance-amount">
+                        <span class="abbreviated">0.00</span>
+                        <span class="currency-symbol">GJ</span>
+                    </div>
+                    <div class="balance-popup">
+                        <div class="balance-label">Full Balance</div>
+                        <div class="balance-amount">
+                            <span class="full">0</span>
+                            <span class="currency-symbol">GJ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- WEEKLY CLAIM CARD -->
+        <h2 class="section-title">Weekly Claim</h2>
+        <div class="weekly-card">
+            <i class="fa-solid fa-calendar-week weekly-icon"></i>
+            <div id="weeklyStreak" class="weekly-streak">Current Streak: 0 Week(s)</div>
+            <div id="weeklyReward" class="weekly-reward">Reward: 5,000 AT</div>
+
+            <button id="claimButton" class="weekly-button" disabled>
+                Claim Weekly Reward
+            </button>
+
+            <div id="timer" class="weekly-timer" style="display: none;">
+                Next claim in: --:--:--
+            </div>
+            <a href="index.html" style="display: block; margin-top: 20px; color: var(--accent); text-decoration: none;">&larr; Back to Hub</a>
+        </div>
+    </div>
+
+    <!-- Toast for Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // --- IndexedDB Wrapper Class (REPLICATED from Hub) ---
+        class UserDB {
+            constructor() {
+                this.dbName = 'DankArcadeHubDB';
+                this.storeName = 'userData';
+                this.db = null;
+            }
+
+            async open() {
+                return new Promise((resolve, reject) => {
+                    if (this.db) {
+                        resolve(this.db);
+                        return;
+                    }
+
+                    const request = indexedDB.open(this.dbName, 1);
+
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            db.createObjectStore(this.storeName);
+                        }
+                    };
+
+                    request.onsuccess = (event) => {
+                        this.db = event.target.result;
+                        resolve(this.db);
+                    };
+
+                    request.onerror = (event) => {
+                        console.error("IndexedDB error:", event.target.errorCode);
+                        reject(new Error("Failed to open IndexedDB"));
+                    };
+                });
+            }
+
+            async get(key) {
+                const db = await this.open();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction(this.storeName, 'readonly');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.get(key);
+
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            async set(key, value) {
+                const db = await this.open();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction(this.storeName, 'readwrite');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.put(value, key);
+
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        }
+
+        const userDB = new UserDB();
+        const ONE_WEEK = 7 * 24 * 60 * 60 * 1000;
+        const TWO_WEEKS = 2 * ONE_WEEK; // For streak reset check
+        const BASE_REWARD = 5000;
+        const STREAK_BONUS = 500;
+        const LAST_CLAIM_KEY = 'lastWeeklyClaim';
+        const STREAK_KEY = 'weeklyStreak';
+
+        // --- Core Application Logic (REPLICATED & MODIFIED) ---
+
+        function formatNumber(num) {
+            if (num < 1000) return num.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 't';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'b';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'm';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k';
+            return num.toString();
+        }
+
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        async function getUserData() {
+            const defaultData = {
+                arcadeTokens: 0,
+                goldenJoysticks: 0,
+                lastDailyClaim: 0, 
+                dailyStreak: 0,
+                lastWeeklyClaim: 0,
+                weeklyStreak: 0,
+                lastMonthlyClaim: 0,
+                monthlyStreak: 0,
+            };
+            try {
+                let data = await userDB.get('user');
+                if (!data) {
+                    data = defaultData;
+                    await userDB.set('user', data);
+                }
+                // Ensure new properties are initialized if old data exists (Important for multi-page/multi-claim setup)
+                data.dailyStreak = data.dailyStreak || 0;
+                data.weeklyStreak = data.weeklyStreak || 0;
+                data.monthlyStreak = data.monthlyStreak || 0;
+                data.lastWeeklyClaim = data.lastWeeklyClaim || 0;
+                data.lastMonthlyClaim = data.lastMonthlyClaim || 0;
+                return data;
+            } catch (e) {
+                console.error("Error retrieving user data:", e);
+                return defaultData;
+            }
+        }
+
+        async function saveUserData(data) {
+            try {
+                await userDB.set('user', data);
+            } catch (e) {
+                console.error("Error saving user data:", e);
+                showToast("Error saving data!", 5000);
+            }
+        }
+
+        async function updateBalances() {
+            const data = await getUserData();
+
+            // Update Arcade Tokens (AT)
+            const atBalance = data.arcadeTokens;
+            document.querySelector('#at-card .abbreviated').textContent = formatNumber(atBalance);
+            document.querySelector('#at-card .full').textContent = atBalance.toLocaleString();
+
+            // Update Golden Joysticks (GJ)
+            const gjBalance = data.goldenJoysticks;
+            document.querySelector('#gj-card .abbreviated').textContent = formatNumber(gjBalance);
+            document.querySelector('#gj-card .full').textContent = gjBalance.toLocaleString();
+
+            return data; // Return data for use in checkWeeklyStatus
+        }
+
+        // --- Weekly Functionality ---
+
+        function calculateReward(streak) {
+            return BASE_REWARD + (streak * STREAK_BONUS);
+        }
+
+        function formatTime(ms) {
+            const totalSeconds = Math.floor(ms / 1000);
+            const totalMinutes = Math.floor(totalSeconds / 60);
+            const totalHours = Math.floor(totalMinutes / 60);
+            const days = Math.floor(totalHours / 24);
+            const hours = totalHours % 24;
+            const minutes = totalMinutes % 60;
+            const seconds = totalSeconds % 60;
+
+            const pad = (num) => String(num).padStart(2, '0');
+            return `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+        }
+
+        async function checkWeeklyStatus() {
+            const data = await updateBalances();
+            const now = Date.now();
+            const claimButton = document.getElementById('claimButton');
+            const timerDiv = document.getElementById('timer');
+            const rewardDiv = document.getElementById('weeklyReward');
+            const streakDiv = document.getElementById('weeklyStreak');
+
+            const lastClaim = data[LAST_CLAIM_KEY] || 0;
+            let currentStreak = data[STREAK_KEY] || 0;
+
+            // Check for broken streak (more than 14 days/2 weeks since last claim)
+            if (lastClaim !== 0 && now - lastClaim > TWO_WEEKS) {
+                currentStreak = 0; // Reset streak if lapse is > 14 days
+                data[STREAK_KEY] = 0; // Update data in memory
+                await saveUserData(data);
+                showToast("Your weekly streak was lost!", 5000);
+            }
+
+            const reward = calculateReward(currentStreak);
+
+            // Update UI with current streak and reward
+            streakDiv.textContent = `Current Streak: ${currentStreak} Week(s)`;
+            rewardDiv.textContent = `Reward: ${reward.toLocaleString()} AT`;
+
+            if (now - lastClaim >= ONE_WEEK) {
+                // Claim is available
+                claimButton.disabled = false;
+                claimButton.textContent = "Claim Weekly Reward";
+                timerDiv.style.display = 'none';
+
+                // Optional: Update reward text to reflect potential new streak
+                if (lastClaim !== 0 && now - lastClaim < TWO_WEEKS) {
+                    const nextReward = calculateReward(currentStreak + 1);
+                    rewardDiv.textContent = `Next Reward: ${nextReward.toLocaleString()} AT`;
+                } else {
+                    rewardDiv.textContent = `Reward: ${reward.toLocaleString()} AT`;
+                }
+
+            } else {
+                // Claim is not available
+                claimButton.disabled = true;
+                claimButton.textContent = "Claim Not Yet Available";
+                timerDiv.style.display = 'block';
+
+                const updateTimer = () => {
+                    const remaining = ONE_WEEK - (Date.now() - lastClaim);
+                    if (remaining <= 0) {
+                        clearInterval(timerInterval);
+                        checkWeeklyStatus(); // Re-check status to enable button
+                        return;
+                    }
+                    timerDiv.textContent = `Next claim in: ${formatTime(remaining)}`;
+                };
+
+                updateTimer();
+                const timerInterval = setInterval(updateTimer, 1000);
+            }
+        }
+
+        async function handleClaim() {
+            const data = await getUserData();
+            const now = Date.now();
+
+            if (now - data[LAST_CLAIM_KEY] >= ONE_WEEK) {
+                // Determine if streak should continue
+                const lastClaim = data[LAST_CLAIM_KEY] || 0;
+                let currentStreak = data[STREAK_KEY] || 0;
+
+                if (lastClaim !== 0 && now - lastClaim < TWO_WEEKS) {
+                    currentStreak += 1; // Streak continues
+                } else {
+                    currentStreak = 0; // Fresh start
+                }
+
+                const reward = calculateReward(currentStreak);
+
+                // Update data
+                data.arcadeTokens += reward;
+                data[LAST_CLAIM_KEY] = now;
+                data[STREAK_KEY] = currentStreak;
+
+                await saveUserData(data);
+                showToast(`SUCCESS! Claimed ${reward.toLocaleString()} AT. Weekly Streak: ${currentStreak} Week(s)!`);
+                checkWeeklyStatus(); // Update UI and timer
+            } else {
+                showToast("Not yet available. Please wait.", 3000);
+            }
+        }
+
+        // --- Initialization ---
+
+        function setupBalanceCards() {
+            const cards = document.querySelectorAll('.balance-card');
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    cards.forEach(c => { if (c !== card) c.classList.remove('active'); });
+                    this.classList.toggle('active');
+                });
+            });
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.balance-card')) {
+                    cards.forEach(card => card.classList.remove('active'));
+                }
+            });
+        }
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('claimButton').addEventListener('click', handleClaim);
+
+            userDB.open().then(() => {
+                checkWeeklyStatus(); // Check status and load balances
+            }).catch(e => {
+                console.error("DB Initialization Failed:", e);
+                showToast("Failed to load user data from storage!", 8000);
+            });
+
+            setupBalanceCards();
+
+            // Auto-update balances periodically
+            setInterval(updateBalances, 30000);
+        });
+    </script>
+</body>
+</html>

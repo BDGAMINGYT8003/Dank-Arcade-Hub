@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dank Arcade Hub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* BASE THEME VARIABLES AND STYLES */
+        :root {
+            --panel-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); /* Dark slate/blue theme base */
+            --popup-bg: #1e293b; /* Darker solid background for popup */
+            --accent: #22ffc5;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --border-glow: rgba(98, 255, 237, 0.35);
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+
+            /* Button Gradient Variables (reused from previous steps) */
+            --button-gradient-1: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); /* Earn/Orange */
+            --button-gradient-2: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); /* Gamble/Pink */
+            --button-gradient-3: linear-gradient(135deg, #10b981 0%, #34d399 100%); /* Invest/Green */
+            --button-gradient-4: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); /* Market/Blue */
+            --button-gradient-5: linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%); /* Finance/Purple */
+            --button-gradient-6: linear-gradient(135deg, #ef4444 0%, #f87171 100%); /* Misc/Red */
+
+            --border-radius: 12px;
+        }
+
+        body {
+            background-color: #0f172a; 
+            color: var(--text-primary);
+            font-family: 'Chakra Petch', sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .balance-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 16px;
+            gap: 12px;
+            position: relative;
+            margin-bottom: 30px; 
+        }
+
+        .balance-card {
+            flex: 1;
+            max-width: 180px;
+            position: relative;
+            cursor: pointer;
+            padding: 12px;
+            border-radius: 16px;
+            background: var(--panel-gradient);
+            border: 1px solid rgba(98, 255, 237, 0.35);
+            transition: transform 0.2s ease;
+            z-index: 10; 
+        }
+
+        .balance-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .balance-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .balance-amount {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .currency-symbol {
+            font-size: 0.8rem;
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: rgba(34, 255, 197, 0.18);
+            color: var(--accent);
+        }
+
+        /* POPUP STYLES */
+        .balance-popup {
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(8px);
+            background: var(--popup-bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glow);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s ease, visibility 0.2s ease;
+            z-index: 1000;
+            white-space: nowrap;
+            color: var(--text-primary);
+            min-width: 150px;
+            text-align: center; 
+        }
+
+        .balance-popup::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            width: 12px;
+            height: 12px;
+            background: var(--popup-bg);
+            border-left: 1px solid var(--border-glow);
+            border-top: 1px solid var(--border-glow);
+            z-index: 1001;
+        }
+
+        .balance-card.active .balance-popup {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .balance-popup .balance-amount {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+        /* BUTTON STYLES (MATCHING UX) */
+        .button-section {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .command-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .command-button {
+            position: relative;
+            height: 120px;
+            background: var(--panel-gradient);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-primary);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(98, 255, 237, 0.1);
+            cursor: pointer;
+        }
+
+        .command-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            z-index: 1;
+        }
+
+        /* Category Color Mappings (UI/UX) */
+        .category-earn::before {
+            background: var(--button-gradient-1); /* Earn/Orange */
+        }
+        .category-gamble::before {
+            background: var(--button-gradient-2); /* Gamble/Pink */
+        }
+        .category-invest::before {
+            background: var(--button-gradient-3); /* Invest/Green */
+        }
+        .category-market::before {
+            background: var(--button-gradient-4); /* Market/Blue */
+        }
+        .category-finance::before {
+            background: var(--button-gradient-5); /* Finance/Purple */
+        }
+        .category-misc::before {
+            background: var(--button-gradient-6); /* Misc/Red */
+        }
+
+        .command-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .command-icon {
+            font-size: 2.0rem;
+            margin-bottom: 10px;
+        }
+
+        .command-name {
+            font-weight: 600;
+            text-align: center;
+            padding: 0 5px;
+            font-size: 0.9rem;
+        }
+
+        .section-title {
+            margin: 40px 0 15px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            position: relative;
+            padding-left: 20px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .section-title:first-of-type {
+            margin-top: 0; 
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 100%;
+            width: 4px;
+            background: var(--accent);
+            border-radius: 3px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--popup-bg);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 9999;
+            pointer-events: none;
+            border: 1px solid var(--border-glow);
+        }
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="balance-bar">
+            <div class="balance-card" id="at-card">
+                <div class="balance-label">Arcade<br>Tokens</div>
+                <div class="balance-amount">
+                    <span class="abbreviated">0.00</span>
+                    <span class="currency-symbol">AT</span>
+                </div>
+                <div class="balance-popup">
+                    <div class="balance-label">Full Balance</div>
+                    <div class="balance-amount">
+                        <span class="full">0</span>
+                        <span class="currency-symbol">AT</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="balance-card" id="gj-card">
+                <div class="balance-label">Golden Joysticks</div>
+                <div class="balance-amount">
+                    <span class="abbreviated">0.00</span>
+                    <span class="currency-symbol">GJ</span>
+                </div>
+                <div class="balance-popup">
+                    <div class="balance-label">Full Balance</div>
+                    <div class="balance-amount">
+                        <span class="full">0</span>
+                        <span class="currency-symbol">GJ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- NEW CATEGORIES AND BUTTONS -->
+    <div class="button-section">
+
+        <!-- Removed Quick Actions Category -->
+
+        <h2 class="section-title">Earn Money</h2>
+        <div class="command-grid">
+            <a href="#" class="command-button category-earn" data-command="work">
+                <i class="fa-solid fa-briefcase command-icon"></i>
+                <div class="command-name">Work</div>
+            </a>
+            <a href="#" class="command-button category-earn" data-command="daily">
+                <i class="fa-solid fa-calendar-day command-icon"></i>
+                <div class="command-name">Daily</div>
+            </a>
+            <a href="#" class="command-button category-earn" data-command="weekly">
+                <i class="fa-solid fa-calendar-week command-icon"></i>
+                <div class="command-name">Weekly</div>
+            </a>
+            <a href="#" class="command-button category-earn" data-command="monthly">
+                <i class="fa-solid fa-calendar command-icon"></i>
+                <div class="command-name">Monthly</div>
+            </a>
+            <a href="#" class="command-button category-earn" data-command="search">
+                <i class="fa-solid fa-magnifying-glass command-icon"></i>
+                <div class="command-name">Search</div>
+            </a>
+            <a href="#" class="command-button category-earn" data-command="crime">
+                <i class="fa-solid fa-mask command-icon"></i>
+                <div class="command-name">Crime</div>
+            </a>
+        </div>
+
+        <h2 class="section-title">Gambling & Games</h2>
+        <div class="command-grid">
+            <a href="#" class="command-button category-gamble" data-command="blackjack">
+                <i class="fa-solid fa-spade command-icon"></i>
+                <div class="command-name">Blackjack</div>
+            </a>
+            <a href="#" class="command-button category-gamble" data-command="slots">
+                <i class="fa-solid fa-bars command-icon"></i>
+                <div class="command-name">Slots</div>
+            </a>
+            <a href="#" class="command-button category-gamble" data-command="bet">
+                <i class="fa-solid fa-dice command-icon"></i>
+                <div class="command-name">Bet</div>
+            </a>
+            <a href="#" class="command-button category-gamble" data-command="coinflip">
+                <i class="fa-solid fa-coins command-icon"></i>
+                <div class="command-name">Coinflip</div>
+            </a>
+            <a href="#" class="command-button category-gamble" data-command="lottery">
+                <i class="fa-solid fa-ticket command-icon"></i>
+                <div class="command-name">Lottery</div>
+            </a>
+            <a href="#" class="command-button category-gamble" data-command="scratch">
+                <i class="fa-solid fa-hand-back-fist command-icon"></i>
+                <div class="command-name">Scratch</div>
+            </a>
+        </div>
+
+        <h2 class="section-title">Trading & Investments</h2>
+        <div class="command-grid">
+            <a href="#" class="command-button category-invest" data-command="stocks">
+                <i class="fa-solid fa-chart-line command-icon"></i>
+                <div class="command-name">Stocks</div>
+            </a>
+            <a href="#" class="command-button category-invest" data-command="crypto">
+                <i class="fa-brands fa-bitcoin command-icon"></i>
+                <div class="command-name">Crypto</div>
+            </a>
+            <a href="#" class="command-button category-invest" data-command="portfolio">
+                <i class="fa-solid fa-chart-pie command-icon"></i>
+                <div class="command-name">Portfolio</div>
+            </a>
+            <a href="#" class="command-button category-invest" data-command="trade">
+                <i class="fa-solid fa-arrows-rotate command-icon"></i>
+                <div class="command-name">Trade</div>
+            </a>
+        </div>
+
+        <h2 class="section-title">Market & Items</h2>
+        <div class="command-grid">
+            <a href="#" class="command-button category-market" data-command="shop">
+                <i class="fa-solid fa-store command-icon"></i>
+                <div class="command-name">Shop</div>
+            </a>
+            <a href="#" class="command-button category-market" data-command="buy">
+                <i class="fa-solid fa-cart-shopping command-icon"></i>
+                <div class="command-name">Buy</div>
+            </a>
+            <a href="#" class="command-button category-market" data-command="sell">
+                <i class="fa-solid fa-tags command-icon"></i>
+                <div class="command-name">Sell</div>
+            </a>
+            <a href="#" class="command-button category-market" data-command="inventory">
+                <i class="fa-solid fa-box-open command-icon"></i>
+                <div class="command-name">Inventory</div>
+            </a>
+            <a href="#" class="command-button category-market" data-command="market">
+                <i class="fa-solid fa-shop command-icon"></i>
+                <div class="command-name">Market</div>
+            </a>
+            <a href="#" class="command-button category-market" data-command="auction">
+                <i class="fa-solid fa-gavel command-icon"></i>
+                <div class="command-name">Auction</div>
+            </a>
+        </div>
+
+        <h2 class="section-title">Bank & Finance</h2>
+        <div class="command-grid">
+            <a href="#" class="command-button category-finance" data-command="balance">
+                <i class="fa-solid fa-wallet command-icon"></i>
+                <div class="command-name">Balance</div>
+            </a>
+            <a href="#" class="command-button category-finance" data-command="deposit">
+                <i class="fa-solid fa-arrow-down command-icon"></i>
+                <div class="command-name">Deposit</div>
+            </a>
+            <a href="#" class="command-button category-finance" data-command="withdraw">
+                <i class="fa-solid fa-arrow-up command-icon"></i>
+                <div class="command-name">Withdraw</div>
+            </a>
+            <a href="#" class="command-button category-finance" data-command="transfer">
+                <i class="fa-solid fa-money-bill-transfer command-icon"></i>
+                <div class="command-name">Transfer</div>
+            </a>
+            <a href="#" class="command-button category-finance" data-command="loan">
+                <i class="fa-solid fa-hand-holding-dollar command-icon"></i>
+                <div class="command-name">Loan</div>
+            </a>
+            <a href="#" class="command-button category-finance" data-command="tax">
+                <i class="fa-solid fa-receipt command-icon"></i>
+                <div class="command-name">Tax</div>
+            </a>
+        </div>
+    </div>
+    <!-- END NEW BUTTONS SECTION -->
+
+    <!-- Toast for Notifications -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // --- IndexedDB Wrapper Class ---
+        class UserDB {
+            constructor() {
+                this.dbName = 'DankArcadeHubDB';
+                this.storeName = 'userData';
+                this.db = null;
+            }
+
+            async open() {
+                return new Promise((resolve, reject) => {
+                    if (this.db) {
+                        resolve(this.db);
+                        return;
+                    }
+
+                    const request = indexedDB.open(this.dbName, 1);
+
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(this.storeName)) {
+                            db.createObjectStore(this.storeName);
+                        }
+                    };
+
+                    request.onsuccess = (event) => {
+                        this.db = event.target.result;
+                        resolve(this.db);
+                    };
+
+                    request.onerror = (event) => {
+                        console.error("IndexedDB error:", event.target.errorCode);
+                        reject(new Error("Failed to open IndexedDB"));
+                    };
+                });
+            }
+
+            async get(key) {
+                const db = await this.open();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction(this.storeName, 'readonly');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.get(key);
+
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+
+            async set(key, value) {
+                const db = await this.open();
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction(this.storeName, 'readwrite');
+                    const store = transaction.objectStore(this.storeName);
+                    const request = store.put(value, key);
+
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject(request.error);
+                });
+            }
+        }
+
+        const userDB = new UserDB();
+
+        // --- Core Application Logic ---
+
+        function formatNumber(num) {
+            if (num < 1000) return num.toLocaleString(undefined, { maximumFractionDigits: 0 });
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 't';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'b';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'm';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k';
+            return num.toString();
+        }
+
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        async function getUserData() {
+            const defaultData = {
+                arcadeTokens: 0,
+                goldenJoysticks: 0,
+                lastDailyClaim: 0 // Timestamp
+            };
+            try {
+                let data = await userDB.get('user');
+                if (!data) {
+                    data = defaultData;
+                    await userDB.set('user', data);
+                }
+                return data;
+            } catch (e) {
+                console.error("Error retrieving user data:", e);
+                return defaultData;
+            }
+        }
+
+        async function saveUserData(data) {
+            try {
+                await userDB.set('user', data);
+            } catch (e) {
+                console.error("Error saving user data:", e);
+                showToast("Error saving data!", 5000);
+            }
+        }
+
+        async function updateBalances() {
+            const data = await getUserData();
+
+            // Update Arcade Tokens (AT)
+            const atBalance = data.arcadeTokens;
+            document.querySelector('#at-card .abbreviated').textContent = formatNumber(atBalance);
+            document.querySelector('#at-card .full').textContent = atBalance.toLocaleString();
+
+            // Update Golden Joysticks (GJ)
+            const gjBalance = data.goldenJoysticks;
+            document.querySelector('#gj-card .abbreviated').textContent = formatNumber(gjBalance);
+            document.querySelector('#gj-card .full').textContent = gjBalance.toLocaleString();
+        }
+
+        // --- Command Handlers (Dummy Functionality) ---
+
+        async function handleDailyClaim() {
+            const data = await getUserData();
+            const now = Date.now();
+            const oneDay = 24 * 60 * 60 * 1000;
+
+            if (now - data.lastDailyClaim > oneDay) {
+                const reward = 1500;
+                data.arcadeTokens += reward;
+                data.lastDailyClaim = now;
+                await saveUserData(data);
+                await updateBalances();
+                showToast(`Daily Reward! You earned ${reward.toLocaleString()} AT!`);
+            } else {
+                const timeRemaining = oneDay - (now - data.lastDailyClaim);
+                const hours = Math.floor(timeRemaining / (60 * 60 * 1000));
+                const minutes = Math.floor((timeRemaining % (60 * 60 * 1000)) / (60 * 1000));
+                showToast(`Daily already claimed. Try again in ${hours}h ${minutes}m.`, 5000);
+            }
+        }
+
+        async function handleWork() {
+            const data = await getUserData();
+            const reward = Math.floor(Math.random() * 500) + 100;
+            data.arcadeTokens += reward;
+            await saveUserData(data);
+            await updateBalances();
+            showToast(`You worked hard and earned ${reward.toLocaleString()} AT!`);
+        }
+
+        async function handleGenericCommand(command) {
+            showToast(`'${command}' command executed (Placeholder)!`);
+        }
+
+        function setupCommandHandlers() {
+            const buttons = document.querySelectorAll('.command-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const command = this.getAttribute('data-command');
+                    switch (command) {
+                        case 'daily':
+                            handleDailyClaim();
+                            break;
+                        case 'work':
+                            handleWork();
+                            break;
+                        // All other button commands fall to generic handler for now
+                        default:
+                            handleGenericCommand(command);
+                            break;
+                    }
+                });
+            });
+        }
+
+        function setupBalanceCards() {
+            const cards = document.querySelectorAll('.balance-card');
+
+            cards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Close any other open popups
+                    cards.forEach(c => {
+                        if (c !== card) c.classList.remove('active');
+                    });
+
+                    // Toggle current popup
+                    this.classList.toggle('active');
+                });
+            });
+
+            // Close popups when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.balance-card')) {
+                    cards.forEach(card => card.classList.remove('active'));
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize IndexedDB and load data
+            userDB.open().then(() => {
+                updateBalances();
+            }).catch(e => {
+                console.error("DB Initialization Failed:", e);
+                showToast("Failed to load user data from storage!", 8000);
+            });
+
+            setupBalanceCards();
+            setupCommandHandlers();
+
+            // Auto-update balances every 30 seconds for demonstration
+            setInterval(updateBalances, 30000);
+        });
+    </script>
+</body>
+</html>
