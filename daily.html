@@ -425,6 +425,7 @@
                 }
                 // Ensure new properties are initialized if old data exists
                 data.dailyStreak = data.dailyStreak || 0;
+                data.lastDailyClaim = data.lastDailyClaim || 0;
                 return data;
             } catch (e) {
                 console.error("Error retrieving user data:", e);
