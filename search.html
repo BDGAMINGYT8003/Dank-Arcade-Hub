@@ -261,6 +261,32 @@
         .toast.show {
             opacity: 1;
         }
+
+        .search-again-button {
+            display: block;
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.1s ease;
+            color: var(--text-primary);
+            background: var(--button-gradient-search);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            margin-top: 20px;
+        }
+
+        .search-again-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .search-again-button:active {
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -314,7 +340,7 @@
             <div id="resultTitle">Result</div>
             <div id="resultMessage"></div>
             <div id="resultReward"></div>
-            <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: var(--button-gradient-daily); border: none; border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer;">Search Again</button>
+            <button onclick="location.reload()" class="search-again-button">Search Again</button>
         </div>
 
         <a href="index.html" style="display: block; margin-top: 30px; color: var(--accent); text-align: center; text-decoration: none;">&larr; Back to Hub</a>
