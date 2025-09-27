@@ -57,7 +57,7 @@
             padding: 12px;
             border-radius: 16px;
             background: var(--panel-gradient);
-            border: 1px solid rgba(98, 255, 237, 0.35);
+            border: 1px solid var(--border-glow);
             transition: transform 0.2s ease;
             z-index: 10; 
         }
@@ -89,6 +89,14 @@
             border-radius: 8px;
             background: rgba(34, 255, 197, 0.18);
             color: var(--accent);
+            display: inline-flex; /* Needed for icon alignment */
+            align-items: center; /* Align icon and text vertically */
+        }
+
+        .currency-icon {
+            height: 1em; /* Adjust as needed, should be similar to font size */
+            width: auto;
+            margin-right: 4px; /* Space between icon and text */
         }
 
         .balance-popup {
@@ -135,6 +143,16 @@
             justify-content: center;
             align-items: center;
             width: 100%;
+        }
+
+        .balance-popup .currency-symbol {
+            font-size: 0.8rem; /* Maintain size */
+            padding: 2px 6px;
+            border-radius: 8px;
+            background: rgba(34, 255, 197, 0.18);
+            color: var(--accent);
+            display: inline-flex;
+            align-items: center;
         }
 
         .section-title {
@@ -244,13 +262,19 @@
                     <div class="balance-label">Arcade<br>Tokens</div>
                     <div class="balance-amount">
                         <span class="abbreviated">0.00</span>
-                        <span class="currency-symbol">AT</span>
+                        <span class="currency-symbol">
+                        <img src="images/AT.png" alt="AT" class="currency-icon">
+                        AT
+                    </span>
                     </div>
                     <div class="balance-popup">
                         <div class="balance-label">Full Balance</div>
                         <div class="balance-amount">
                             <span class="full">0</span>
-                            <span class="currency-symbol">AT</span>
+                            <span class="currency-symbol">
+                            <img src="images/AT.png" alt="AT" class="currency-icon">
+                            AT
+                        </span>
                         </div>
                     </div>
                 </div>
@@ -259,13 +283,19 @@
                     <div class="balance-label">Golden Joysticks</div>
                     <div class="balance-amount">
                         <span class="abbreviated">0.00</span>
-                        <span class="currency-symbol">GJ</span>
+                        <span class="currency-symbol">
+                        <img src="images/GJ.png" alt="GJ" class="currency-icon">
+                        GJ
+                    </span>
                     </div>
                     <div class="balance-popup">
                         <div class="balance-label">Full Balance</div>
                         <div class="balance-amount">
                             <span class="full">0</span>
-                            <span class="currency-symbol">GJ</span>
+                            <span class="currency-symbol">
+                            <img src="images/GJ.png" alt="GJ" class="currency-icon">
+                            GJ
+                        </span>
                         </div>
                     </div>
                 </div>
