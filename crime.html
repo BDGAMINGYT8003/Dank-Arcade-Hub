@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Dank Arcade Hub - Crime</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -81,47 +81,115 @@
 
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--popup-bg); color: var(--text-primary); padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); opacity: 0; transition: opacity 0.3s ease; z-index: 9999; pointer-events: none; border: 1px solid var(--border-glow); }
         .toast.show { opacity: 1; }
+
+        /* --- ANIMATION & TRANSITION STYLES --- */
+        html, body {
+            overscroll-behavior: none;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+        }
+        body {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ and Edge */
+            user-select: none; /* Standard syntax */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--border-glow);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #body-wrapper {
+            opacity: 1;
+            transition: opacity 0.4s ease-in-out;
+        }
+        #body-wrapper.fade-out {
+            opacity: 0;
+        }
+        /* 3D Button Click Animation */
+        .command-button, .balance-card, .crime-activity-button, #commitAgainButton {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out !important;
+        }
+        .command-button:active, .balance-card:active, .crime-activity-button:active, #commitAgainButton:active {
+            transform: perspective(800px) translateZ(20px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- HEADER/BALANCE BAR -->
-        <header>
-            <div class="balance-bar">
-                <div class="balance-card" id="at-card"><div class="balance-label">Arcade<br>Tokens</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div></div></div>
-                <div class="balance-card" id="gj-card"><div class="balance-label">Golden<br>Joysticks</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div></div></div>
-            </div>
-        </header>
-
-        <!-- CRIME AREA (Default View) -->
-        <div id="crimeArea">
-            <h2 class="section-title">Commit a Crime</h2>
-            <div class="crime-info" style="color: var(--text-secondary); text-align: center; margin-bottom: 25px;">
-                Choose one activity below. High risk, high reward... or high fines.
-            </div>
-            <div id="crimeGrid" class="crime-grid"></div>
-        </div>
-
-        <!-- RESULT AREA (Post-Crime View) -->
-        <div id="resultContainer">
-            <div id="resultTitle">Result</div>
-            <div id="resultMessage"></div>
-            <div id="resultChange"></div>
-            <button id="commitAgainButton" onclick="location.reload()">Commit Another Crime</button>
-            <div id="postCrimeCooldownTimer"></div>
-        </div>
-
-        <!-- COOLDOWN AREA (Post-Refresh View) -->
-        <div id="cooldownArea">
-            <i class="fa-solid fa-clock cooldown-icon"></i>
-            <div id="cooldownTitle">Lying Low</div>
-            <div id="postRefreshCooldownTimer"></div>
-        </div>
-
-        <a href="index.html" style="display: block; margin-top: 30px; color: var(--accent); text-align: center; text-decoration: none;">&larr; Back to Hub</a>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
     </div>
+    <div id="body-wrapper">
+        <div class="container">
+            <!-- HEADER/BALANCE BAR -->
+            <header>
+                <div class="balance-bar">
+                    <div class="balance-card" id="at-card"><div class="balance-label">Arcade<br>Tokens</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div></div></div>
+                    <div class="balance-card" id="gj-card"><div class="balance-label">Golden<br>Joysticks</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div></div></div>
+                </div>
+            </header>
 
-    <div id="toast" class="toast"></div>
+            <!-- CRIME AREA (Default View) -->
+            <div id="crimeArea">
+                <h2 class="section-title">Commit a Crime</h2>
+                <div class="crime-info" style="color: var(--text-secondary); text-align: center; margin-bottom: 25px;">
+                    Choose one activity below. High risk, high reward... or high fines.
+                </div>
+                <div id="crimeGrid" class="crime-grid"></div>
+            </div>
+
+            <!-- RESULT AREA (Post-Crime View) -->
+            <div id="resultContainer">
+                <div id="resultTitle">Result</div>
+                <div id="resultMessage"></div>
+                <div id="resultChange"></div>
+                <button id="commitAgainButton" onclick="location.reload()">Commit Another Crime</button>
+                <div id="postCrimeCooldownTimer"></div>
+            </div>
+
+            <!-- COOLDOWN AREA (Post-Refresh View) -->
+            <div id="cooldownArea">
+                <i class="fa-solid fa-clock cooldown-icon"></i>
+                <div id="cooldownTitle">Lying Low</div>
+                <div id="postRefreshCooldownTimer"></div>
+            </div>
+
+            <a href="index.html" style="display: block; margin-top: 30px; color: var(--accent); text-align: center; text-decoration: none;">&larr; Back to Hub</a>
+        </div>
+
+        <div id="toast" class="toast"></div>
+    </div>
 
     <script>
         // --- Simulated crimes.json Data ---
@@ -172,7 +240,6 @@
         }
 
         // --- Crime Functionality ---
-
         function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function getRandomSelection(array) { return array[Math.floor(Math.random() * array.length)]; }
         function selectRandomActivities(data, count) { const shuffled = data.sort(() => 0.5 - Math.random()); return shuffled.slice(0, count); }
@@ -187,16 +254,19 @@
 
         function renderCrimeOptions() {
             const crimeGrid = document.getElementById('crimeGrid');
+            if (!crimeGrid) return;
             crimeGrid.innerHTML = '';
             const activities = selectRandomActivities(CRIME_ACTIVITIES_DATA, 3);
             activities.forEach(activity => { crimeGrid.appendChild(createActivityButton(activity)); });
-            document.getElementById('crimeArea').style.display = 'block';
+            const crimeArea = document.getElementById('crimeArea');
+            if(crimeArea) crimeArea.style.display = 'block';
         }
 
         function startPostCrimeCooldown(endTime) {
             clearInterval(cooldownInterval);
             const commitAgainButton = document.getElementById('commitAgainButton');
             const cooldownTimer = document.getElementById('postCrimeCooldownTimer');
+            if (!commitAgainButton || !cooldownTimer) return;
 
             const updateTimer = () => {
                 const remainingMs = endTime - Date.now();
@@ -219,6 +289,7 @@
             clearInterval(cooldownInterval);
             const cooldownArea = document.getElementById('cooldownArea');
             const cooldownTimer = document.getElementById('postRefreshCooldownTimer');
+            if (!cooldownArea || !cooldownTimer) return;
             cooldownArea.style.display = 'block';
 
             const updateTimer = () => {
@@ -252,7 +323,6 @@
                 button.classList.add('success');
             } else {
                 const fine = getRandomInt(activityData.fineRange[0], activityData.fineRange[1]);
-                // Safety Net: Ensure balance doesn't go negative
                 changeAmount = Math.min(data.arcadeTokens, fine);
                 message = getRandomSelection(activityData.failureOutcomes);
                 data.arcadeTokens -= changeAmount;
@@ -265,7 +335,6 @@
             await saveUserData(data);
             await updateBalances();
 
-            // Display the immediate result
             document.getElementById('crimeArea').style.display = 'none';
             const resultContainer = document.getElementById('resultContainer');
             const resultChangeEl = document.getElementById('resultChange');
@@ -285,34 +354,84 @@
             startPostCrimeCooldown(cooldownEndTime);
         }
 
-        // --- Initialization ---
         function setupBalanceCards() {
             const cards = document.querySelectorAll('.balance-card');
             cards.forEach(card => { card.addEventListener('click', function(e) { cards.forEach(c => { if (c !== card) c.classList.remove('active'); }); this.classList.toggle('active'); }); });
             document.addEventListener('click', function(e) { if (!e.target.closest('.balance-card')) { cards.forEach(card => card.classList.remove('active')); } });
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await userDB.open().catch(e => {
+        // --- ANIMATION & TRANSITION SCRIPT ---
+        function handleNavigation(event) {
+            const link = event.currentTarget;
+            const url = new URL(link.href, window.location.origin);
+            if (url.origin !== window.location.origin || link.target === '_blank' || event.ctrlKey || event.metaKey) return;
+            event.preventDefault();
+            const bodyWrapper = document.getElementById('body-wrapper');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            bodyWrapper.classList.add('fade-out');
+            setTimeout(() => { loadingOverlay.classList.add('visible'); }, 200);
+            fetch(url.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newBodyWrapper = doc.getElementById('body-wrapper');
+                    const newTitle = doc.querySelector('title').innerText;
+                    setTimeout(() => {
+                        bodyWrapper.innerHTML = newBodyWrapper.innerHTML;
+                        document.title = newTitle;
+                        history.pushState({}, newTitle, url.href);
+                        const newMainScript = Array.from(doc.querySelectorAll('script')).find(s => s.innerText.includes('new UserDB'));
+                        if (newMainScript) {
+                           eval(newMainScript.innerText);
+                        }
+                        loadingOverlay.classList.remove('visible');
+                        setTimeout(() => { bodyWrapper.classList.remove('fade-out'); }, 50);
+                    }, 1200);
+                })
+                .catch(err => {
+                    console.error('Failed to load page: ', err);
+                    window.location.href = url.href;
+                });
+        }
+
+        function attachNavigationHandlers() {
+            document.querySelectorAll('a[href]').forEach(link => {
+                const url = new URL(link.href, window.location.origin);
+                if (url.origin === window.location.origin && !link.href.endsWith('#')) {
+                    link.removeEventListener('click', handleNavigation);
+                    link.addEventListener('click', handleNavigation);
+                }
+            });
+        }
+
+        // --- Initialization ---
+        function initializePage() {
+            userDB.open().catch(e => {
                 console.error("DB Initialization Failed:", e);
                 showToast("Failed to load user data from storage!", 8000);
             });
+            updateBalances().then(data => {
+                const now = Date.now();
+                const crimeArea = document.getElementById('crimeArea');
+                const resultContainer = document.getElementById('resultContainer');
+                const cooldownArea = document.getElementById('cooldownArea');
 
-            const data = await updateBalances();
-            const now = Date.now();
+                if (crimeArea) crimeArea.style.display = 'none';
+                if (resultContainer) resultContainer.style.display = 'none';
+                if (cooldownArea) cooldownArea.style.display = 'none';
 
-            document.getElementById('crimeArea').style.display = 'none';
-            document.getElementById('resultContainer').style.display = 'none';
-            document.getElementById('cooldownArea').style.display = 'none';
-
-            if (data.crimeCooldownEnd > now) {
-                startPostRefreshCooldown(data.crimeCooldownEnd);
-            } else {
-                renderCrimeOptions();
-            }
-
+                if (data.crimeCooldownEnd > now) {
+                    startPostRefreshCooldown(data.crimeCooldownEnd);
+                } else {
+                    renderCrimeOptions();
+                }
+            });
             setupBalanceCards();
-        });
+            attachNavigationHandlers();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializePage);
     </script>
 </body>
 </html>

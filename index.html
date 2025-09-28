@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dank Arcade Hub</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
@@ -251,191 +251,259 @@
         .toast.show {
             opacity: 1;
         }
+
+        /* --- ANIMATION & TRANSITION STYLES --- */
+        html, body {
+            overscroll-behavior: none;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+        }
+        body {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ and Edge */
+            user-select: none; /* Standard syntax */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--border-glow);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #body-wrapper {
+            opacity: 1;
+            transition: opacity 0.4s ease-in-out;
+        }
+        #body-wrapper.fade-out {
+            opacity: 0;
+        }
+        /* 3D Button Click Animation */
+        .command-button, .balance-card {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out !important;
+        }
+        .command-button:active, .balance-card:active {
+            transform: perspective(800px) translateZ(20px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+        }
     </style>
 </head>
 <body>
-    <header>
-        <div class="balance-bar">
-            <div class="balance-card" id="at-card">
-                <div class="balance-label">Arcade<br>Tokens</div>
-                <div class="balance-amount">
-                    <span class="abbreviated">0.00</span>
-                    <span class="currency-symbol">
-                        <img src="images/AT.png" alt="AT" class="currency-icon">
-                        AT
-                    </span>
-                </div>
-                <div class="balance-popup">
-                    <div class="balance-label">Full Balance</div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+    <div id="body-wrapper">
+        <header>
+            <div class="balance-bar">
+                <div class="balance-card" id="at-card">
+                    <div class="balance-label">Arcade<br>Tokens</div>
                     <div class="balance-amount">
-                        <span class="full">0</span>
+                        <span class="abbreviated">0.00</span>
                         <span class="currency-symbol">
                             <img src="images/AT.png" alt="AT" class="currency-icon">
                             AT
                         </span>
                     </div>
+                    <div class="balance-popup">
+                        <div class="balance-label">Full Balance</div>
+                        <div class="balance-amount">
+                            <span class="full">0</span>
+                            <span class="currency-symbol">
+                                <img src="images/AT.png" alt="AT" class="currency-icon">
+                                AT
+                            </span>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="balance-card" id="gj-card">
-                <div class="balance-label">Golden<br>Joysticks</div>
-                <div class="balance-amount">
-                    <span class="abbreviated">0.00</span>
-                    <span class="currency-symbol">
-                        <img src="images/GJ.png" alt="GJ" class="currency-icon">
-                        GJ
-                    </span>
-                </div>
-                <div class="balance-popup">
-                    <div class="balance-label">Full Balance</div>
+                <div class="balance-card" id="gj-card">
+                    <div class="balance-label">Golden<br>Joysticks</div>
                     <div class="balance-amount">
-                        <span class="full">0</span>
+                        <span class="abbreviated">0.00</span>
                         <span class="currency-symbol">
                             <img src="images/GJ.png" alt="GJ" class="currency-icon">
                             GJ
                         </span>
                     </div>
+                    <div class="balance-popup">
+                        <div class="balance-label">Full Balance</div>
+                        <div class="balance-amount">
+                            <span class="full">0</span>
+                            <span class="currency-symbol">
+                                <img src="images/GJ.png" alt="GJ" class="currency-icon">
+                                GJ
+                            </span>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <!-- BUTTONS SECTION - MODIFIED FOR DIRECT NAVIGATION -->
-    <div class="button-section">
-        <h2 class="section-title">Earn Money</h2>
-        <div class="command-grid">
-            <a href="work.html" class="command-button category-earn">
-                <i class="fa-solid fa-briefcase command-icon"></i>
-                <div class="command-name">Work</div>
-            </a>
-            <a href="daily.html" class="command-button category-earn">
-                <i class="fa-solid fa-calendar-day command-icon"></i>
-                <div class="command-name">Daily</div>
-            </a>
-            <a href="weekly.html" class="command-button category-earn">
-                <i class="fa-solid fa-calendar-week command-icon"></i>
-                <div class="command-name">Weekly</div>
-            </a>
-            <a href="monthly.html" class="command-button category-earn">
-                <i class="fa-solid fa-calendar command-icon"></i>
-                <div class="command-name">Monthly</div>
-            </a>
-            <a href="search.html" class="command-button category-earn">
-                <i class="fa-solid fa-magnifying-glass command-icon"></i>
-                <div class="command-name">Search</div>
-            </a>
-            <a href="crime.html" class="command-button category-earn">
-                <i class="fa-solid fa-mask command-icon"></i>
-                <div class="command-name">Crime</div>
-            </a>
+        <!-- BUTTONS SECTION - MODIFIED FOR DIRECT NAVIGATION -->
+        <div class="button-section">
+            <h2 class="section-title">Earn Money</h2>
+            <div class="command-grid">
+                <a href="work.html" class="command-button category-earn">
+                    <i class="fa-solid fa-briefcase command-icon"></i>
+                    <div class="command-name">Work</div>
+                </a>
+                <a href="daily.html" class="command-button category-earn">
+                    <i class="fa-solid fa-calendar-day command-icon"></i>
+                    <div class="command-name">Daily</div>
+                </a>
+                <a href="weekly.html" class="command-button category-earn">
+                    <i class="fa-solid fa-calendar-week command-icon"></i>
+                    <div class="command-name">Weekly</div>
+                </a>
+                <a href="monthly.html" class="command-button category-earn">
+                    <i class="fa-solid fa-calendar command-icon"></i>
+                    <div class="command-name">Monthly</div>
+                </a>
+                <a href="search.html" class="command-button category-earn">
+                    <i class="fa-solid fa-magnifying-glass command-icon"></i>
+                    <div class="command-name">Search</div>
+                </a>
+                <a href="crime.html" class="command-button category-earn">
+                    <i class="fa-solid fa-mask command-icon"></i>
+                    <div class="command-name">Crime</div>
+                </a>
+            </div>
+
+            <h2 class="section-title">Gambling & Games</h2>
+            <div class="command-grid">
+                <a href="blackjack.html" class="command-button category-gamble">
+                    <i class="fa-solid fa-spade command-icon"></i>
+                    <div class="command-name">Blackjack</div>
+                </a>
+                <a href="slots.html" class="command-button category-gamble">
+                    <i class="fa-solid fa-bars command-icon"></i>
+                    <div class="command-name">Slots</div>
+                </a>
+                <a href="bet.html" class="command-button category-gamble">
+                    <i class="fa-solid fa-dice command-icon"></i>
+                    <div class="command-name">Bet</div>
+                </a>
+                <a href="coinflip.html" class="command-button category-gamble">
+                    <i class="fa-solid fa-coins command-icon"></i>
+                    <div class="command-name">Coinflip</div>
+                </a>
+                <a href="lottery.html" class="command-button category-gamble">
+                    <i class="fa-solid fa-ticket command-icon"></i>
+                    <div class="command-name">Lottery</div>
+                </a>
+                <a href="scratch.html" class="command-button category-gamble">
+                    <i class="fa-solid fa-hand-back-fist command-icon"></i>
+                    <div class="command-name">Scratch</div>
+                </a>
+            </div>
+
+            <h2 class="section-title">Trading & Investments</h2>
+            <div class="command-grid">
+                <a href="stocks.html" class="command-button category-invest">
+                    <i class="fa-solid fa-chart-line command-icon"></i>
+                    <div class="command-name">Stocks</div>
+                </a>
+                <a href="crypto.html" class="command-button category-invest">
+                    <i class="fa-brands fa-bitcoin command-icon"></i>
+                    <div class="command-name">Crypto</div>
+                </a>
+                <a href="portfolio.html" class="command-button category-invest">
+                    <i class="fa-solid fa-chart-pie command-icon"></i>
+                    <div class="command-name">Portfolio</div>
+                </a>
+                <a href="trade.html" class="command-button category-invest">
+                    <i class="fa-solid fa-arrows-rotate command-icon"></i>
+                    <div class="command-name">Trade</div>
+                </a>
+            </div>
+
+            <h2 class="section-title">Market & Items</h2>
+            <div class="command-grid">
+                <a href="shop.html" class="command-button category-market">
+                    <i class="fa-solid fa-store command-icon"></i>
+                    <div class="command-name">Shop</div>
+                </a>
+                <a href="buy.html" class="command-button category-market">
+                    <i class="fa-solid fa-cart-shopping command-icon"></i>
+                    <div class="command-name">Buy</div>
+                </a>
+                <a href="sell.html" class="command-button category-market">
+                    <i class="fa-solid fa-tags command-icon"></i>
+                    <div class="command-name">Sell</div>
+                </a>
+                <a href="inventory.html" class="command-button category-market">
+                    <i class="fa-solid fa-box-open command-icon"></i>
+                    <div class="command-name">Inventory</div>
+                </a>
+                <a href="market.html" class="command-button category-market">
+                    <i class="fa-solid fa-shop command-icon"></i>
+                    <div class="command-name">Market</div>
+                </a>
+                <a href="auction.html" class="command-button category-market">
+                    <i class="fa-solid fa-gavel command-icon"></i>
+                    <div class="command-name">Auction</div>
+                </a>
+            </div>
+
+            <h2 class="section-title">Bank & Finance</h2>
+            <div class="command-grid">
+                <a href="balance.html" class="command-button category-finance">
+                    <i class="fa-solid fa-wallet command-icon"></i>
+                    <div class="command-name">Balance</div>
+                </a>
+                <a href="deposit.html" class="command-button category-finance">
+                    <i class="fa-solid fa-arrow-down command-icon"></i>
+                    <div class="command-name">Deposit</div>
+                </a>
+                <a href="withdraw.html" class="command-button category-finance">
+                    <i class="fa-solid fa-arrow-up command-icon"></i>
+                    <div class="command-name">Withdraw</div>
+                </a>
+                <a href="transfer.html" class="command-button category-finance">
+                    <i class="fa-solid fa-money-bill-transfer command-icon"></i>
+                    <div class="command-name">Transfer</div>
+                </a>
+                <a href="loan.html" class="command-button category-finance">
+                    <i class="fa-solid fa-hand-holding-dollar command-icon"></i>
+                    <div class="command-name">Loan</div>
+                </a>
+                <a href="tax.html" class="command-button category-finance">
+                    <i class="fa-solid fa-receipt command-icon"></i>
+                    <div class="command-name">Tax</div>
+                </a>
+            </div>
         </div>
 
-        <h2 class="section-title">Gambling & Games</h2>
-        <div class="command-grid">
-            <a href="blackjack.html" class="command-button category-gamble">
-                <i class="fa-solid fa-spade command-icon"></i>
-                <div class="command-name">Blackjack</div>
-            </a>
-            <a href="slots.html" class="command-button category-gamble">
-                <i class="fa-solid fa-bars command-icon"></i>
-                <div class="command-name">Slots</div>
-            </a>
-            <a href="bet.html" class="command-button category-gamble">
-                <i class="fa-solid fa-dice command-icon"></i>
-                <div class="command-name">Bet</div>
-            </a>
-            <a href="coinflip.html" class="command-button category-gamble">
-                <i class="fa-solid fa-coins command-icon"></i>
-                <div class="command-name">Coinflip</div>
-            </a>
-            <a href="lottery.html" class="command-button category-gamble">
-                <i class="fa-solid fa-ticket command-icon"></i>
-                <div class="command-name">Lottery</div>
-            </a>
-            <a href="scratch.html" class="command-button category-gamble">
-                <i class="fa-solid fa-hand-back-fist command-icon"></i>
-                <div class="command-name">Scratch</div>
-            </a>
-        </div>
-
-        <h2 class="section-title">Trading & Investments</h2>
-        <div class="command-grid">
-            <a href="stocks.html" class="command-button category-invest">
-                <i class="fa-solid fa-chart-line command-icon"></i>
-                <div class="command-name">Stocks</div>
-            </a>
-            <a href="crypto.html" class="command-button category-invest">
-                <i class="fa-brands fa-bitcoin command-icon"></i>
-                <div class="command-name">Crypto</div>
-            </a>
-            <a href="portfolio.html" class="command-button category-invest">
-                <i class="fa-solid fa-chart-pie command-icon"></i>
-                <div class="command-name">Portfolio</div>
-            </a>
-            <a href="trade.html" class="command-button category-invest">
-                <i class="fa-solid fa-arrows-rotate command-icon"></i>
-                <div class="command-name">Trade</div>
-            </a>
-        </div>
-
-        <h2 class="section-title">Market & Items</h2>
-        <div class="command-grid">
-            <a href="shop.html" class="command-button category-market">
-                <i class="fa-solid fa-store command-icon"></i>
-                <div class="command-name">Shop</div>
-            </a>
-            <a href="buy.html" class="command-button category-market">
-                <i class="fa-solid fa-cart-shopping command-icon"></i>
-                <div class="command-name">Buy</div>
-            </a>
-            <a href="sell.html" class="command-button category-market">
-                <i class="fa-solid fa-tags command-icon"></i>
-                <div class="command-name">Sell</div>
-            </a>
-            <a href="inventory.html" class="command-button category-market">
-                <i class="fa-solid fa-box-open command-icon"></i>
-                <div class="command-name">Inventory</div>
-            </a>
-            <a href="market.html" class="command-button category-market">
-                <i class="fa-solid fa-shop command-icon"></i>
-                <div class="command-name">Market</div>
-            </a>
-            <a href="auction.html" class="command-button category-market">
-                <i class="fa-solid fa-gavel command-icon"></i>
-                <div class="command-name">Auction</div>
-            </a>
-        </div>
-
-        <h2 class="section-title">Bank & Finance</h2>
-        <div class="command-grid">
-            <a href="balance.html" class="command-button category-finance">
-                <i class="fa-solid fa-wallet command-icon"></i>
-                <div class="command-name">Balance</div>
-            </a>
-            <a href="deposit.html" class="command-button category-finance">
-                <i class="fa-solid fa-arrow-down command-icon"></i>
-                <div class="command-name">Deposit</div>
-            </a>
-            <a href="withdraw.html" class="command-button category-finance">
-                <i class="fa-solid fa-arrow-up command-icon"></i>
-                <div class="command-name">Withdraw</div>
-            </a>
-            <a href="transfer.html" class="command-button category-finance">
-                <i class="fa-solid fa-money-bill-transfer command-icon"></i>
-                <div class="command-name">Transfer</div>
-            </a>
-            <a href="loan.html" class="command-button category-finance">
-                <i class="fa-solid fa-hand-holding-dollar command-icon"></i>
-                <div class="command-name">Loan</div>
-            </a>
-            <a href="tax.html" class="command-button category-finance">
-                <i class="fa-solid fa-receipt command-icon"></i>
-                <div class="command-name">Tax</div>
-            </a>
-        </div>
+        <div id="toast" class="toast"></div>
     </div>
-
-    <div id="toast" class="toast"></div>
 
     <script>
         // --- SCRIPT MODIFIED: REMOVED UNNECESSARY HANDLERS ---
@@ -552,15 +620,89 @@
             });
         }
 
+        // --- ANIMATION & TRANSITION SCRIPT ---
+        function handleNavigation(event) {
+            const link = event.currentTarget;
+            const url = new URL(link.href, window.location.origin);
+
+            // Ignore external links or special links
+            if (url.origin !== window.location.origin || link.target === '_blank' || event.ctrlKey || event.metaKey) {
+                return;
+            }
+
+            event.preventDefault();
+
+            const bodyWrapper = document.getElementById('body-wrapper');
+            const loadingOverlay = document.getElementById('loading-overlay');
+
+            // 1. Fade out current content
+            bodyWrapper.classList.add('fade-out');
+
+            // 2. Show loading spinner after a short delay
+            setTimeout(() => {
+                loadingOverlay.classList.add('visible');
+            }, 200);
+
+            // 3. Fetch new page content
+            fetch(url.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newBodyWrapper = doc.getElementById('body-wrapper');
+                    const newTitle = doc.querySelector('title').innerText;
+
+                    // 4. Wait for loading animation (1-2 seconds)
+                    setTimeout(() => {
+                        // 5. Replace content
+                        bodyWrapper.innerHTML = newBodyWrapper.innerHTML;
+                        document.title = newTitle;
+                        history.pushState({}, newTitle, url.href);
+
+                        // 6. Re-run scripts for the new page
+                        const newScripts = doc.querySelectorAll('script');
+                        const oldScripts = document.querySelectorAll('script');
+
+                        // Execute the main logic script from the new page
+                        const newMainScript = Array.from(newScripts).find(s => s.innerText.includes('new UserDB'));
+                        if (newMainScript) {
+                           eval(newMainScript.innerText);
+                        }
+
+                        // 7. Fade in new content
+                        loadingOverlay.classList.remove('visible');
+                        setTimeout(() => {
+                            bodyWrapper.classList.remove('fade-out');
+                        }, 50);
+
+                    }, 1200); // Simulate network/loading time
+                })
+                .catch(err => {
+                    console.error('Failed to load page: ', err);
+                    window.location.href = url.href; // Fallback to normal navigation
+                });
+        }
+
+        function attachNavigationHandlers() {
+            document.querySelectorAll('a[href]').forEach(link => {
+                const url = new URL(link.href, window.location.origin);
+                if (url.origin === window.location.origin && !link.href.endsWith('#')) {
+                    link.removeEventListener('click', handleNavigation);
+                    link.addEventListener('click', handleNavigation);
+                }
+            });
+        }
+
+        // Initial Page Load
         document.addEventListener('DOMContentLoaded', () => {
             userDB.open().then(() => {
                 updateBalances();
             }).catch(e => {
                 console.error("DB Initialization Failed:", e);
-                // Fallback or user notification
             });
 
             setupBalanceCards();
+            attachNavigationHandlers();
 
             // Auto-update balances periodically
             setInterval(updateBalances, 30000);

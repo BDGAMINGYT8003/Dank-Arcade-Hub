@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dank Arcade Hub - Search</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&display=swap" rel="stylesheet">
@@ -44,21 +44,8 @@
         .balance-card:hover { transform: translateY(-2px); }
         .balance-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-secondary); margin-bottom: 4px; }
         .balance-amount { font-size: 1.4rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 6px; }
-        .currency-symbol {
-            font-size: 1rem;
-            padding: 4px 8px;
-            border-radius: 8px;
-            background: rgba(34, 255, 197, 0.18);
-            color: var(--accent);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .currency-icon {
-            width: 24px;
-            height: 24px;
-        }
+        .currency-symbol { font-size: 1rem; padding: 4px 8px; border-radius: 8px; background: rgba(34, 255, 197, 0.18); color: var(--accent); display: inline-flex; align-items: center; gap: 6px; }
+        .currency-icon { width: 24px; height: 24px; }
         .balance-popup { position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(8px); background: var(--popup-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border-glow); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7); opacity: 0; visibility: hidden; transition: opacity 0.2s ease, visibility 0.2s ease; z-index: 1000; white-space: nowrap; color: var(--text-primary); min-width: 150px; text-align: center; }
         .balance-popup::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%) rotate(45deg); width: 12px; height: 12px; background: var(--popup-bg); border-left: 1px solid var(--border-glow); border-top: 1px solid var(--border-glow); z-index: 1001; }
         .balance-card.active .balance-popup { opacity: 1; visibility: visible; }
@@ -85,7 +72,6 @@
         #searchAgainButton { margin-top: 20px; padding: 10px 20px; background: var(--button-gradient-search); border: none; border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer; transition: background 0.3s ease; }
         #searchAgainButton:disabled { background: var(--button-gradient-disabled); cursor: not-allowed; opacity: 0.7; }
 
-        /* --- NEW STYLES FOR COOLDOWN CARD --- */
         #cooldownArea { padding: 30px; background: var(--panel-gradient); border-radius: var(--border-radius); border: 1px solid var(--border-glow); text-align: center; display: none; }
         #cooldownIcon { font-size: 3rem; margin-bottom: 15px; color: #ef4444; }
         #cooldownTitle { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
@@ -93,47 +79,115 @@
 
         .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--popup-bg); color: var(--text-primary); padding: 10px 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); opacity: 0; transition: opacity 0.3s ease; z-index: 9999; pointer-events: none; border: 1px solid var(--border-glow); }
         .toast.show { opacity: 1; }
+
+        /* --- ANIMATION & TRANSITION STYLES --- */
+        html, body {
+            overscroll-behavior: none;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
+        }
+        body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, and Opera */
+        }
+        body {
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10+ and Edge */
+            user-select: none; /* Standard syntax */
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        #loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #loading-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid var(--border-glow);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        #body-wrapper {
+            opacity: 1;
+            transition: opacity 0.4s ease-in-out;
+        }
+        #body-wrapper.fade-out {
+            opacity: 0;
+        }
+        /* 3D Button Click Animation */
+        .command-button, .balance-card, .search-location-button, #searchAgainButton {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, box-shadow 0.15s ease-out !important;
+        }
+        .command-button:active, .balance-card:active, .search-location-button:active, #searchAgainButton:active {
+            transform: perspective(800px) translateZ(20px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.6);
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- HEADER/BALANCE BAR -->
-        <header>
-            <div class="balance-bar">
-                <div class="balance-card" id="at-card"><div class="balance-label">Arcade<br>Tokens</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div></div></div>
-                <div class="balance-card" id="gj-card"><div class="balance-label">Golden<br>Joysticks</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div></div></div>
-            </div>
-        </header>
-
-        <!-- SEARCH AREA (Default View) -->
-        <div id="searchArea">
-            <h2 class="section-title">Where to Search?</h2>
-            <div class="search-info" style="color: var(--text-secondary); text-align: center; margin-bottom: 25px;">
-                Choose one location below to search for Arcade Tokens!
-            </div>
-            <div id="searchGrid" class="search-grid"></div>
-        </div>
-
-        <!-- RESULT AREA (Post-Search View) -->
-        <div id="resultContainer">
-            <div id="resultTitle">Result</div>
-            <div id="resultMessage"></div>
-            <div id="resultReward"></div>
-            <button id="searchAgainButton" onclick="location.reload()">Search Again</button>
-            <div id="postSearchCooldownTimer"></div>
-        </div>
-
-        <!-- COOLDOWN AREA (Post-Refresh View) -->
-        <div id="cooldownArea">
-            <i class="fa-solid fa-clock cooldown-icon"></i>
-            <div id="cooldownTitle">Search on Cooldown</div>
-            <div id="postRefreshCooldownTimer"></div>
-        </div>
-
-        <a href="index.html" style="display: block; margin-top: 30px; color: var(--accent); text-align: center; text-decoration: none;">&larr; Back to Hub</a>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
     </div>
+    <div id="body-wrapper">
+        <div class="container">
+            <!-- HEADER/BALANCE BAR -->
+            <header>
+                <div class="balance-bar">
+                    <div class="balance-card" id="at-card"><div class="balance-label">Arcade<br>Tokens</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/AT.png" alt="AT" class="currency-icon">AT</span></div></div></div>
+                    <div class="balance-card" id="gj-card"><div class="balance-label">Golden<br>Joysticks</div><div class="balance-amount"><span class="abbreviated">0.00</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div><div class="balance-popup"><div class="balance-label">Full Balance</div><div class="balance-amount"><span class="full">0</span><span class="currency-symbol"><img src="images/GJ.png" alt="GJ" class="currency-icon">GJ</span></div></div></div>
+                </div>
+            </header>
 
-    <div id="toast" class="toast"></div>
+            <!-- SEARCH AREA (Default View) -->
+            <div id="searchArea">
+                <h2 class="section-title">Where to Search?</h2>
+                <div class="search-info" style="color: var(--text-secondary); text-align: center; margin-bottom: 25px;">
+                    Choose one location below to search for Arcade Tokens!
+                </div>
+                <div id="searchGrid" class="search-grid"></div>
+            </div>
+
+            <!-- RESULT AREA (Post-Search View) -->
+            <div id="resultContainer">
+                <div id="resultTitle">Result</div>
+                <div id="resultMessage"></div>
+                <div id="resultReward"></div>
+                <button id="searchAgainButton" onclick="location.reload()">Search Again</button>
+                <div id="postSearchCooldownTimer"></div>
+            </div>
+
+            <!-- COOLDOWN AREA (Post-Refresh View) -->
+            <div id="cooldownArea">
+                <i class="fa-solid fa-clock cooldown-icon"></i>
+                <div id="cooldownTitle">Search on Cooldown</div>
+                <div id="postRefreshCooldownTimer"></div>
+            </div>
+
+            <a href="index.html" style="display: block; margin-top: 30px; color: var(--accent); text-align: center; text-decoration: none;">&larr; Back to Hub</a>
+        </div>
+
+        <div id="toast" class="toast"></div>
+    </div>
 
     <script>
         // --- Simulated locations.json Data ---
@@ -160,7 +214,7 @@
 
         // --- Core Application Logic (REPLICATED) ---
         function formatNumber(num) { if (num < 1000) return num.toLocaleString(undefined, { maximumFractionDigits: 0 }); if (num >= 1e12) return (num / 1e12).toFixed(2) + 't'; if (num >= 1e9) return (num / 1e9).toFixed(2) + 'b'; if (num >= 1e6) return (num / 1e6).toFixed(2) + 'm'; if (num >= 1e3) return (num / 1e3).toFixed(2) + 'k'; return num.toString(); }
-        function showToast(message, duration = 3000) { const toast = document.getElementById('toast'); toast.textContent = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, duration); }
+        function showToast(message, duration = 3000) { const toast = document.getElementById('toast'); if(toast) { toast.textContent = message; toast.classList.add('show'); setTimeout(() => { toast.classList.remove('show'); }, duration); } }
 
         async function getUserData() {
             const defaultData = { arcadeTokens: 0, goldenJoysticks: 0, searchCooldownEnd: 0 };
@@ -176,15 +230,18 @@
 
         async function updateBalances() {
             const data = await getUserData();
-            document.querySelector('#at-card .abbreviated').textContent = formatNumber(data.arcadeTokens);
-            document.querySelector('#at-card .full').textContent = data.arcadeTokens.toLocaleString();
-            document.querySelector('#gj-card .abbreviated').textContent = formatNumber(data.goldenJoysticks);
-            document.querySelector('#gj-card .full').textContent = data.goldenJoysticks.toLocaleString();
+            const atAbbr = document.querySelector('#at-card .abbreviated');
+            const atFull = document.querySelector('#at-card .full');
+            const gjAbbr = document.querySelector('#gj-card .abbreviated');
+            const gjFull = document.querySelector('#gj-card .full');
+            if(atAbbr) atAbbr.textContent = formatNumber(data.arcadeTokens);
+            if(atFull) atFull.textContent = data.arcadeTokens.toLocaleString();
+            if(gjAbbr) gjAbbr.textContent = formatNumber(data.goldenJoysticks);
+            if(gjFull) gjFull.textContent = data.goldenJoysticks.toLocaleString();
             return data;
         }
 
         // --- Search Functionality ---
-
         function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function getRandomSelection(array) { return array[Math.floor(Math.random() * array.length)]; }
         function selectRandomLocations(data, count) { const shuffled = data.sort(() => 0.5 - Math.random()); return shuffled.slice(0, count); }
@@ -199,16 +256,19 @@
 
         function renderSearchOptions() {
             const searchGrid = document.getElementById('searchGrid');
+            if(!searchGrid) return;
             searchGrid.innerHTML = '';
             const locations = selectRandomLocations(SEARCH_LOCATIONS_DATA, 3);
             locations.forEach(location => { searchGrid.appendChild(createLocationButton(location)); });
-            document.getElementById('searchArea').style.display = 'block';
+            const searchArea = document.getElementById('searchArea');
+            if(searchArea) searchArea.style.display = 'block';
         }
 
         function startPostSearchCooldown(endTime) {
             clearInterval(cooldownInterval);
             const searchAgainButton = document.getElementById('searchAgainButton');
             const cooldownTimer = document.getElementById('postSearchCooldownTimer');
+            if (!searchAgainButton || !cooldownTimer) return;
 
             const updateTimer = () => {
                 const remainingMs = endTime - Date.now();
@@ -231,6 +291,7 @@
             clearInterval(cooldownInterval);
             const cooldownArea = document.getElementById('cooldownArea');
             const cooldownTimer = document.getElementById('postRefreshCooldownTimer');
+            if (!cooldownArea || !cooldownTimer) return;
             cooldownArea.style.display = 'block';
 
             const updateTimer = () => {
@@ -238,7 +299,7 @@
                 if (remainingMs <= 0) {
                     clearInterval(cooldownInterval);
                     cooldownArea.style.display = 'none';
-                    renderSearchOptions(); // Automatically show new options
+                    renderSearchOptions();
                     return;
                 }
                 cooldownTimer.style.display = 'block';
@@ -273,7 +334,6 @@
             await saveUserData(data);
             await updateBalances();
 
-            // Display the immediate result
             document.getElementById('searchArea').style.display = 'none';
             const resultContainer = document.getElementById('resultContainer');
             document.getElementById('resultTitle').textContent = isSuccess ? "SUCCESS!" : "FAILURE";
@@ -284,37 +344,84 @@
             startPostSearchCooldown(cooldownEndTime);
         }
 
-        // --- Initialization ---
         function setupBalanceCards() {
             const cards = document.querySelectorAll('.balance-card');
             cards.forEach(card => { card.addEventListener('click', function(e) { cards.forEach(c => { if (c !== card) c.classList.remove('active'); }); this.classList.toggle('active'); }); });
             document.addEventListener('click', function(e) { if (!e.target.closest('.balance-card')) { cards.forEach(card => card.classList.remove('active')); } });
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            await userDB.open().catch(e => {
+        // --- ANIMATION & TRANSITION SCRIPT ---
+        function handleNavigation(event) {
+            const link = event.currentTarget;
+            const url = new URL(link.href, window.location.origin);
+            if (url.origin !== window.location.origin || link.target === '_blank' || event.ctrlKey || event.metaKey) return;
+            event.preventDefault();
+            const bodyWrapper = document.getElementById('body-wrapper');
+            const loadingOverlay = document.getElementById('loading-overlay');
+            bodyWrapper.classList.add('fade-out');
+            setTimeout(() => { loadingOverlay.classList.add('visible'); }, 200);
+            fetch(url.href)
+                .then(response => response.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newBodyWrapper = doc.getElementById('body-wrapper');
+                    const newTitle = doc.querySelector('title').innerText;
+                    setTimeout(() => {
+                        bodyWrapper.innerHTML = newBodyWrapper.innerHTML;
+                        document.title = newTitle;
+                        history.pushState({}, newTitle, url.href);
+                        const newMainScript = Array.from(doc.querySelectorAll('script')).find(s => s.innerText.includes('new UserDB'));
+                        if (newMainScript) {
+                           eval(newMainScript.innerText);
+                        }
+                        loadingOverlay.classList.remove('visible');
+                        setTimeout(() => { bodyWrapper.classList.remove('fade-out'); }, 50);
+                    }, 1200);
+                })
+                .catch(err => {
+                    console.error('Failed to load page: ', err);
+                    window.location.href = url.href;
+                });
+        }
+
+        function attachNavigationHandlers() {
+            document.querySelectorAll('a[href]').forEach(link => {
+                const url = new URL(link.href, window.location.origin);
+                if (url.origin === window.location.origin && !link.href.endsWith('#')) {
+                    link.removeEventListener('click', handleNavigation);
+                    link.addEventListener('click', handleNavigation);
+                }
+            });
+        }
+
+        // --- Initialization ---
+        function initializePage() {
+            userDB.open().catch(e => {
                 console.error("DB Initialization Failed:", e);
                 showToast("Failed to load user data from storage!", 8000);
             });
+            updateBalances().then(data => {
+                const now = Date.now();
+                const searchArea = document.getElementById('searchArea');
+                const resultContainer = document.getElementById('resultContainer');
+                const cooldownArea = document.getElementById('cooldownArea');
 
-            const data = await updateBalances();
-            const now = Date.now();
+                if(searchArea) searchArea.style.display = 'none';
+                if(resultContainer) resultContainer.style.display = 'none';
+                if(cooldownArea) cooldownArea.style.display = 'none';
 
-            // Hide all main views by default
-            document.getElementById('searchArea').style.display = 'none';
-            document.getElementById('resultContainer').style.display = 'none';
-            document.getElementById('cooldownArea').style.display = 'none';
-
-            if (data.searchCooldownEnd > now) {
-                // Cooldown is active after a refresh.
-                startPostRefreshCooldown(data.searchCooldownEnd);
-            } else {
-                // No cooldown, show search options.
-                renderSearchOptions();
-            }
-
+                if (data.searchCooldownEnd > now) {
+                    startPostRefreshCooldown(data.searchCooldownEnd);
+                } else {
+                    renderSearchOptions();
+                }
+            });
             setupBalanceCards();
-        });
+            attachNavigationHandlers();
+        }
+
+        document.addEventListener('DOMContentLoaded', initializePage);
     </script>
 </body>
 </html>
