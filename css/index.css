@@ -1,0 +1,63 @@
+.button-section {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.command-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.command-button {
+    position: relative;
+    height: 120px;
+    background: var(--panel-gradient);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-primary);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(98, 255, 237, 0.1);
+    cursor: pointer;
+}
+
+.command-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    z-index: 1;
+}
+
+.category-earn::before { background: var(--button-gradient-1); }
+.category-gamble::before { background: var(--button-gradient-2); }
+.category-invest::before { background: var(--button-gradient-3); }
+.category-market::before { background: var(--button-gradient-4); }
+.category-finance::before { background: var(--button-gradient-5); }
+.category-misc::before { background: var(--button-gradient-6); }
+
+.command-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.command-icon {
+    font-size: 2.0rem;
+    margin-bottom: 10px;
+}
+
+.command-name {
+    font-weight: 600;
+    text-align: center;
+    padding: 0 5px;
+    font-size: 0.9rem;
+}

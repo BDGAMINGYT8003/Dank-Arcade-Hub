@@ -1,0 +1,35 @@
+:root {
+    --button-gradient-crime: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); /* Pink/Crime gradient */
+    --button-gradient-fail: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+    --button-gradient-success: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    --button-gradient-disabled: linear-gradient(135deg, #3d4f66 0%, #2f3d52 100%);
+}
+
+.crime-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; }
+.crime-activity-button { position: relative; height: 140px; background: var(--panel-gradient); border-radius: var(--border-radius); display: flex; flex-direction: column; justify-content: center; align-items: center; text-decoration: none; color: var(--text-primary); overflow: hidden; box-shadow: var(--shadow); transition: transform 0.2s ease, box-shadow 0.2s ease; border: 1px solid rgba(98, 255, 237, 0.1); cursor: pointer; }
+.crime-activity-button:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5); }
+.crime-activity-button::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 6px; z-index: 1; background: var(--button-gradient-crime); }
+.crime-activity-button.success::before { background: var(--button-gradient-success); }
+.crime-activity-button.fail::before { background: var(--button-gradient-fail); }
+.crime-activity-button:disabled { opacity: 0.8; cursor: default; }
+.activity-icon { font-size: 2.5rem; margin-bottom: 15px; }
+.activity-name { font-weight: 600; text-align: center; padding: 0 10px; font-size: 1rem; }
+
+#resultContainer { margin-top: 30px; padding: 20px; background: var(--panel-gradient); border-radius: var(--border-radius); border: 1px solid var(--border-glow); text-align: center; display: none; }
+#resultTitle { font-size: 1.5rem; font-weight: 700; margin-bottom: 10px; }
+#resultMessage { font-size: 1.1rem; color: var(--text-secondary); }
+#resultChange { font-size: 2rem; font-weight: 700; margin-top: 15px; }
+#resultChange.success { color: var(--accent); }
+#resultChange.fail { color: var(--button-gradient-fail); }
+
+#commitAgainButton { margin-top: 20px; padding: 10px 20px; background: var(--button-gradient-crime); border: none; border-radius: 8px; color: var(--text-primary); font-weight: 600; cursor: pointer; transition: background 0.3s ease; }
+#commitAgainButton:disabled { background: var(--button-gradient-disabled); cursor: not-allowed; opacity: 0.7; }
+
+#cooldownArea { padding: 30px; background: var(--panel-gradient); border-radius: var(--border-radius); border: 1px solid var(--border-glow); text-align: center; display: none; }
+#cooldownIcon { font-size: 3rem; margin-bottom: 15px; color: #ef4444; }
+#cooldownTitle { font-size: 1.5rem; font-weight: 700; color: var(--text-primary); }
+#postCrimeCooldownTimer, #postRefreshCooldownTimer { margin-top: 15px; font-size: 1.1rem; color: var(--text-secondary); font-weight: 600; display: none; }
+
+.section-title {
+    text-align: center;
+}
